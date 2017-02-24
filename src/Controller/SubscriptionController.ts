@@ -12,6 +12,10 @@ export class SubscriptionController {
         this.subDAO = new SubscriptionDAO();
     }
 
+    saveSub(){
+
+    }
+
     getSubscriptionItemList(callback){
         this.subDAO.getSubscriptionItemListByCat(-1, function (list) {
             callback(list)
