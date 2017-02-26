@@ -6,9 +6,10 @@ import index from './routes/index';
 import user from './routes/user';
 import cookieParser = require('cookie-parser'); // this module doesn't use the ES6 default export yet
 export var mysql_info = {
-    url: "",
-    username: "",
-    password: ""
+    host: 'localhost',
+    user: 'root',
+    password: '123',
+    database: 'Puzzle',
 }
 
 // export var MongoClient = require('mongodb').MongoClient
@@ -16,9 +17,6 @@ export var mysql_info = {
 //
 // // Connection URL
 // export var url = 'mongodb://localhost:27017/PuzzleDB';
-
-
-
 
 
 const app: express.Express = express();

@@ -1,4 +1,5 @@
 "use strict";
+
 var User_1 = require('../model/User');
 var mysql = require('mysql');
 /* ES6: */

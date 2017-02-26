@@ -3,6 +3,7 @@ import {User} from "../model/User";
 import * as bodyParser from 'body-parser';
 import {UserController} from '../Controller/UserController';
 import {SubscriptionController} from '../Controller/SubscriptionController';
+import {Transaction} from "../model/Transaction";
 
 
 const index = Router();
@@ -65,7 +66,27 @@ index.get('/subscription/get', function (req, res, next) {
             'list': list
         }))
     })
+});
 
 
+index.post('/subscription/subscribe', function (req, res, next) {
+    let data = JSON.parse(JSON.stringify(req.body))
+    let transaction = new Transaction()
+    transaction.user_id = parseInt(data.user_id);
+    transaction.pricing_id = parseInt(data.pricing_id);
+    transaction.subscription_id = parseInt(data.subscription_id);
+    subController.subscribe(transaction, function (result, data) {
+        res.setHeader("content-type", "application/json");
+        res.send(JSON.stringify(result))
+    })
+});
+index.get('/pricing', function (req, res, next) {
+    let id = parseInt(req.query.id)
+    let data = JSON.parse(JSON.stringify(req.body))
+
+    subController.getPricingDetails(id, function (result) {
+        res.setHeader("content-type", "application/json");
+        res.send(JSON.stringify(result))
+    })
 });
 export default index;

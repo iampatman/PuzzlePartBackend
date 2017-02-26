@@ -40,6 +40,31 @@ export class SubscriptionDAO{
         })
     }
 
+
+    getSubscriptionItemDetails(id: number, callback){
+        this.getConnection(function (connection) {
+            var queryString = "Select * from SubscriptionItem where subscription_item_id = " + id;
+
+            connection.query(queryString, function (err, rows, fields) {
+                if (err)
+                    callback(false)
+                else {
+                    if (rows.length >= 1) {
+                        let item = new SubscriptionItem();
+                        item.subscription_id = rows[0].subscription_id;
+                        item.name = rows[0].name;
+                        item.introduction = rows[0].introduction;
+                        item.rating = rows[0].rating;
+                        item.smallImage = rows[0].small_image;
+                    }
+                }
+
+                connection.end();
+            });
+
+        })
+    }
+
     getConnection(callback){
         var connection = mysql.createConnection(
             {

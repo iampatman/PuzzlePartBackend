@@ -3,6 +3,7 @@ var express_1 = require('express');
 var User_1 = require("../model/User");
 var UserController_1 = require('../Controller/UserController');
 var SubscriptionController_1 = require('../Controller/SubscriptionController');
+var Transaction_1 = require("../model/Transaction");
 var index = express_1.Router();
 var userController = new UserController_1.UserController();
 var subController = new SubscriptionController_1.SubscriptionController();
@@ -52,6 +53,25 @@ index.get('/subscription/get', function (req, res, next) {
         res.send(JSON.stringify({
             'list': list
         }));
+    });
+});
+index.post('/subscription/subscribe', function (req, res, next) {
+    var data = JSON.parse(JSON.stringify(req.body));
+    var transaction = new Transaction_1.Transaction();
+    transaction.user_id = parseInt(data.user_id);
+    transaction.pricing_id = parseInt(data.pricing_id);
+    transaction.subscription_id = parseInt(data.subscription_id);
+    subController.subscribe(transaction, function (result, data) {
+        res.setHeader("content-type", "application/json");
+        res.send(JSON.stringify(result));
+    });
+});
+index.get('/pricing', function (req, res, next) {
+    var id = parseInt(req.query.id);
+    var data = JSON.parse(JSON.stringify(req.body));
+    subController.getPricingDetails(id, function (result) {
+        res.setHeader("content-type", "application/json");
+        res.send(JSON.stringify(result));
     });
 });
 Object.defineProperty(exports, "__esModule", { value: true });

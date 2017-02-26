@@ -7,9 +7,10 @@ var index_1 = require('./routes/index');
 var user_1 = require('./routes/user');
 var cookieParser = require('cookie-parser'); // this module doesn't use the ES6 default export yet
 exports.mysql_info = {
-    url: "",
-    username: "",
-    password: ""
+    host: 'localhost',
+    user: 'root',
+    password: '123',
+    database: 'Puzzle',
 };
 // export var MongoClient = require('mongodb').MongoClient
 // export var assert = require('assert');

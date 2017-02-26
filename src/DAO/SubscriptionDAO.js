@@ -1,6 +1,6 @@
 "use strict";
 
-var SubscriptionItem = require('../model/SubscriptionItem');
+var SubscriptionItem_1 = require('../model/SubscriptionItem');
 var mysql = require('mysql');
 /* ES6: */
 var SubscriptionDAO = (function () {
@@ -24,6 +24,26 @@ var SubscriptionDAO = (function () {
                 }
                 connection.end();
                 callback(items);
+            });
+        });
+    };
+    SubscriptionDAO.prototype.getSubscriptionItemDetails = function (id, callback) {
+        this.getConnection(function (connection) {
+            var queryString = "Select * from SubscriptionItem where subscription_item_id = " + id;
+            connection.query(queryString, function (err, rows, fields) {
+                if (err)
+                    callback(false);
+                else {
+                    if (rows.length >= 1) {
+                        var item = new SubscriptionItem_1.SubscriptionItem();
+                        item.subscription_id = rows[0].subscription_id;
+                        item.name = rows[0].name;
+                        item.introduction = rows[0].introduction;
+                        item.rating = rows[0].rating;
+                        item.smallImage = rows[0].small_image;
+                    }
+                }
+                connection.end();
             });
         });
     };
