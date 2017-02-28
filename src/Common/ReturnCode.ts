@@ -3,10 +3,11 @@
  */
 
 
-export class ReturnCode{
+export class ReturnCode {
     static SUCCEEDED = 1;
     static FAILED = 0;
     static EXCEPTION = -5000;
     static DATA_INVALID = -1001;
+    static SESSION_INVALID = -1002;
 }
 

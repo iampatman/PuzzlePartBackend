@@ -39,27 +39,28 @@ export class PricingDAO extends DAOIF {
         )
     }
 
-    findPricingByPricingId(id: number, callback) {
-        super.getConnection(function (connection) {
-                var queryString = "Select * from Pricing WHERE pricing_id = " + id;
-                connection.query(queryString, function (err, rows, fields) {
-                    if (err)
-                        callback(false)
-                    else {
-                        if (rows.length > 0){
-                            var priceItem = {
-                                pricing_id: rows[0].pricing_id,
-                                quantity: rows[0].quantity,
-                                price: rows[0].price,
-                                subscription_id: rows[0].subscription_id
+    async findPricingByPricingId(id: number) {
+        return new Promise((resolve, reject) => {
+            super.getConnection(function (connection) {
+                    var queryString = "Select * from Pricing WHERE pricing_id = " + id;
+                    connection.query(queryString, function (err, rows, fields) {
+                        if (err)
+                            reject(err)
+                        else {
+                            if (rows.length > 0) {
+                                var priceItem = {
+                                    pricing_id: rows[0].pricing_id,
+                                    quantity: rows[0].quantity,
+                                    price: rows[0].price,
+                                    subscription_id: rows[0].subscription_id
+                                }
+                                resolve(JSON.stringify(priceItem))
                             }
-                            callback(priceItem)
                         }
-                    }
-                    connection.end();
-                });
-            }
-        )
+                        connection.end();
+                    });
+                }
+            )
+        })
     }
-
 }

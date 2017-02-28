@@ -1,46 +1,45 @@
-var wrapper =  require('node-mysql-wrapper');
-var db = wrapper.wrap("mysql://root:123@localhost/puzzle?debug=false&charset=utf8");
-import { User } from '../model/User';
+import {User} from '../model/User';
 
 var mysql = require('mysql');
 
 
-
-
-
-
 /* ES6: */
-export class UserDAO{
+export class UserDAO {
 
-    constructor(){
+    constructor() {
 
     }
-    findUserByUsername(username: string, callback){
-        this.getConnection(function (connection) {
-            var queryString = "Select * from User";
-            var user = new User(username);
-            connection.query(queryString, function (err, rows, fields) {
-                if (err)
-                    callback(false)
-                for (var i in rows) {
-                    console.log('Post Titles: ', rows[i].username);
-                    if (rows[i].username == username) {
-                        user.password = rows[i].password
-                        break;
-                    }
-                }
-                connection.end();
-                callback(user)
-            });
 
+    async findUserByUsername(username: string) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                this.getConnection(function (connection) {
+                    var queryString = "Select * from User where username = " + username;
+                    var user = new User(username);
+                    connection.query(queryString, function (err, rows, fields) {
+                        if (err)
+                            reject(err)
+                        for (var i in rows) {
+                            console.log('Post Titles: ', rows[i].username);
+                            if (rows[i].username == username) {
+                                user.password = rows[i].password
+                                break;
+                            }
+                        }
+                        connection.end();
+                        resolve(user);
+                    });
+                })
+            }, 3000);
         })
     }
-    saveUser(user: User, callback){
+
+    saveUser(user: User, callback) {
         this.getConnection(function (connection) {
             var sql = "INSERT INTO User SET ?";
             var values = {username: user.username, password: user.password};
-            connection.query(sql,values, function (err, rows, fields) {
-                if (err){
+            connection.query(sql, values, function (err, rows, fields) {
+                if (err) {
                     console.log(err.toString());
                     callback(false)
                 }
@@ -51,16 +50,16 @@ export class UserDAO{
         })
     }
 
-    getConnection(callback){
+    getConnection(callback) {
         var connection = mysql.createConnection(
             {
-                host     : 'localhost',
-                user     : 'root',
-                password : '123',
-                database : 'Puzzle',
+                host: 'localhost',
+                user: 'root',
+                password: '123',
+                database: 'Puzzle',
             }
         );
-        connection.connect(function(err) {
+        connection.connect(function (err) {
             if (err) {
                 console.error('error connecting: ' + err.stack);
                 return;

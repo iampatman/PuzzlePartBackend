@@ -2,10 +2,9 @@
 /**
  * Created by NguyenTrung on 24/2/17.
  */
-var SubscriptionItem = (function () {
-    function SubscriptionItem() {
+class SubscriptionItem {
+    constructor() {
     }
-    return SubscriptionItem;
-}());
+}
 exports.SubscriptionItem = SubscriptionItem;
 //# sourceMappingURL=SubscriptionItem.js.map

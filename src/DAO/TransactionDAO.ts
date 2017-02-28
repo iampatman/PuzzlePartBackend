@@ -28,11 +28,10 @@ export class TransactionDAO extends DAOIF{
             connection.query(sql, values, function (err, rows, fields) {
                 if (err) {
                     console.log(err.toString());
-                    callback(ReturnCode.EXCEPTION)
+                    callback(err, {returnCode: ReturnCode.EXCEPTION})
                 } else {
                     let result = rows.affectedRows != 0
                     connection.end();
-
                     callback(result ? ReturnCode.SUCCEEDED : ReturnCode.FAILED)
                 }
 

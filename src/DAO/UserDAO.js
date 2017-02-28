@@ -1,31 +1,44 @@
 "use strict";
-
-var User_1 = require('../model/User');
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator.throw(value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments)).next());
+    });
+};
+const User_1 = require('../model/User');
 var mysql = require('mysql');
 /* ES6: */
-var UserDAO = (function () {
-    function UserDAO() {
+class UserDAO {
+    constructor() {
     }
-    UserDAO.prototype.findUserByUsername = function (username, callback) {
-        this.getConnection(function (connection) {
-            var queryString = "Select * from User";
-            var user = new User_1.User(username);
-            connection.query(queryString, function (err, rows, fields) {
-                if (err)
-                    callback(false);
-                for (var i in rows) {
-                    console.log('Post Titles: ', rows[i].username);
-                    if (rows[i].username == username) {
-                        user.password = rows[i].password;
-                        break;
-                    }
-                }
-                connection.end();
-                callback(user);
+    findUserByUsername(username) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    this.getConnection(function (connection) {
+                        var queryString = "Select * from User where username = " + username;
+                        var user = new User_1.User(username);
+                        connection.query(queryString, function (err, rows, fields) {
+                            if (err)
+                                reject(err);
+                            for (var i in rows) {
+                                console.log('Post Titles: ', rows[i].username);
+                                if (rows[i].username == username) {
+                                    user.password = rows[i].password;
+                                    break;
+                                }
+                            }
+                            connection.end();
+                            resolve(user);
+                        });
+                    });
+                }, 3000);
             });
         });
-    };
-    UserDAO.prototype.saveUser = function (user, callback) {
+    }
+    saveUser(user, callback) {
         this.getConnection(function (connection) {
             var sql = "INSERT INTO User SET ?";
             var values = { username: user.username, password: user.password };
@@ -34,13 +47,13 @@ var UserDAO = (function () {
                     console.log(err.toString());
                     callback(false);
                 }
-                var result = rows.affectedRows != 0;
+                let result = rows.affectedRows != 0;
                 connection.end();
                 callback(result);
             });
         });
-    };
-    UserDAO.prototype.getConnection = function (callback) {
+    }
+    getConnection(callback) {
         var connection = mysql.createConnection({
             host: 'localhost',
             user: 'root',
@@ -56,8 +69,7 @@ var UserDAO = (function () {
             callback(connection);
             //return connection;
         });
-    };
-    return UserDAO;
-}());
+    }
+}
 exports.UserDAO = UserDAO;
 //# sourceMappingURL=UserDAO.js.map

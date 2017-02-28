@@ -5,6 +5,7 @@ import {Transaction} from "../model/Transaction";
 import {ReturnCode} from "../Common/ReturnCode";
 import {} from "../Common/UtilsTS"
 import {UtilsTS} from "../Common/UtilsTS";
+import {SessionManager} from "./SessionManager";
 
 
 /**
@@ -25,10 +26,18 @@ export class SubscriptionController {
     }
 
 
-    getSubscriptionItemList(callback) {
-        this.subDAO.getSubscriptionItemListByCat(-1, function (list) {
-            callback(list)
-        })
+    async getSubscriptionItemList(data, callback) {
+        let username = data.username;
+        let sessionID = data.sessionID;
+        let sessionValid = <Boolean> (await SessionManager.getInstance().checkSessionID(sessionID, username))
+
+        if (sessionValid == false) {
+            callback(null, {returnCode: ReturnCode.SESSION_INVALID})
+        } else {
+            this.subDAO.getSubscriptionItemListByCat(-1, function (list) {
+                callback(null, {returnCode: ReturnCode.SUCCEEDED, list: list})
+            })
+        }
     }
 
     // getSubscriptionItemDetails(id: number, callback){
@@ -39,44 +48,44 @@ export class SubscriptionController {
     // }
     getPricingDetails(id: number, callback) {
         this.pricingDAO.findPricingBySubscriptionId(id, function (list) {
-            callback(list)
+            callback({returnCode: ReturnCode.SUCCEEDED, list: list})
         })
     }
 
 
-    subscribe(transaction: Transaction, callback) {
+    async subscribe(transaction: Transaction, callback) {
         var transaction_id = this.generate_transaction_id();
         var validate_transaction_detail = true;
+        var returnCode = ReturnCode.FAILED;
         transaction.transaction_id = transaction_id;
         let transactionDAO = this.transactionDAO;
         //checksum
-        this.pricingDAO.findPricingByPricingId(transaction.pricing_id, function (pricingItem) {
-            if (pricingItem.subscription_id != transaction.subscription_id) {
-                callback(ReturnCode.DATA_INVALID);
-                return;
-            } else {
-                let endDate = new Date();
-                endDate.setDate(endDate.getDate() + 31);
-                transaction.start_date = UtilsTS.dateToMySQLTimestamp(new Date());
-                transaction.end_date = UtilsTS.dateToMySQLTimestamp(endDate);
-                transaction.remaining_times = pricingItem.quantity;
-                transaction.payment_completed = false;
+        let pricingStr = <string> (await this.pricingDAO.findPricingByPricingId(transaction.pricing_id));
+        let pricingItem = JSON.parse(pricingStr);
+        if (pricingItem.subscription_id != transaction.subscription_id) {
+            callback(ReturnCode.DATA_INVALID);
+            return;
+        } else {
+            let endDate = new Date();
+            endDate.setDate(endDate.getDate() + 31);
+            transaction.start_date = UtilsTS.dateToMySQLTimestamp(new Date());
+            transaction.end_date = UtilsTS.dateToMySQLTimestamp(endDate);
+            transaction.remaining_times = pricingItem.quantity;
+            transaction.payment_completed = false;
 
-                transactionDAO.saveTransaction(transaction, function (result) {
-                    if (result == ReturnCode.SUCCEEDED) {
-                        console.log("Transaction succeed")
-                        callback(result, transaction);
-                    } else {
-                        console.log("Transaction failed")
-                        callback(ReturnCode.FAILED)
-                    }
+            transactionDAO.saveTransaction(transaction, function (result) {
+                if (result == ReturnCode.SUCCEEDED) {
+                    console.log("Transaction succeed")
+                    callback(result, transaction);
+                } else {
+                    console.log("Transaction failed")
+                    callback(ReturnCode.FAILED)
+                }
 
-                })
-            }
-        })
-
-
+            })
+        }
     }
+
 
     generate_transaction_id() {
         return Math.random().toString(16).substr(0, 9);

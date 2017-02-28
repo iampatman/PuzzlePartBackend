@@ -1,5 +1,4 @@
-var wrapper =  require('node-mysql-wrapper');
-var db = wrapper.wrap("mysql://root:123@localhost/puzzle?debug=false&charset=utf8");
+
 import { SubscriptionItem } from '../model/SubscriptionItem';
 
 var mysql = require('mysql');
@@ -20,7 +19,6 @@ export class SubscriptionDAO{
         this.getConnection(function (connection) {
             var queryString = "Select * from SubscriptionItem";
             var items = [];
-
             connection.query(queryString, function (err, rows, fields) {
                 if (err)
                     callback(false)

@@ -46,25 +46,26 @@ index.post('/user/login', function (req, res, next) {
     let data = JSON.parse(JSON.stringify(req.body))
     let username = data.username;
     let password = data.password;
-    userController.login(username, password, function (result) {
-        res.setHeader("content-type", "application/json");
-        res.send(JSON.stringify({
-            'result': result
-        }))
+    userController.login(username, password, function (err, result) {
+        if (err == null) {
+            res.setHeader("content-type", "application/json");
+            res.send(JSON.stringify(result))
+        }
     });
 
-});
+})
+;
 
 
-index.get('/subscription/get', function (req, res, next) {
-    // let data = JSON.parse(JSON.stringify(req.body))
-    // let username = data.username;
-    // let password = data.password;
-    subController.getSubscriptionItemList(function (list) {
-        res.setHeader("content-type", "application/json");
-        res.send(JSON.stringify({
-            'list': list
-        }))
+index.post('/subscription/get', function (req, res, next) {
+    let data = JSON.parse(JSON.stringify(req.body))
+    let username = data.username;
+    let sessionID = data.sessionID;
+    subController.getSubscriptionItemList(data, function (error, result) {
+        if (error == null) {
+            res.setHeader("content-type", "application/json");
+            res.send(JSON.stringify(result))
+        }
     })
 });
 
@@ -77,13 +78,12 @@ index.post('/subscription/subscribe', function (req, res, next) {
     transaction.subscription_id = parseInt(data.subscription_id);
     subController.subscribe(transaction, function (result, data) {
         res.setHeader("content-type", "application/json");
-        res.send(JSON.stringify(result))
+        res.send(JSON.stringify({returnCode: result, transaction: data}))
     })
 });
 index.get('/pricing', function (req, res, next) {
     let id = parseInt(req.query.id)
     let data = JSON.parse(JSON.stringify(req.body))
-
     subController.getPricingDetails(id, function (result) {
         res.setHeader("content-type", "application/json");
         res.send(JSON.stringify(result))

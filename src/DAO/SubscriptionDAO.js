@@ -1,12 +1,11 @@
 "use strict";
-
-var SubscriptionItem_1 = require('../model/SubscriptionItem');
+const SubscriptionItem_1 = require('../model/SubscriptionItem');
 var mysql = require('mysql');
 /* ES6: */
-var SubscriptionDAO = (function () {
-    function SubscriptionDAO() {
+class SubscriptionDAO {
+    constructor() {
     }
-    SubscriptionDAO.prototype.getSubscriptionItemListByCat = function (category, callback) {
+    getSubscriptionItemListByCat(category, callback) {
         this.getConnection(function (connection) {
             var queryString = "Select * from SubscriptionItem";
             var items = [];
@@ -14,7 +13,7 @@ var SubscriptionDAO = (function () {
                 if (err)
                     callback(false);
                 for (var i in rows) {
-                    var item = new SubscriptionItem_1.SubscriptionItem();
+                    let item = new SubscriptionItem_1.SubscriptionItem();
                     item.subscription_id = rows[i].subscription_id;
                     item.name = rows[i].name;
                     item.introduction = rows[i].introduction;
@@ -26,8 +25,8 @@ var SubscriptionDAO = (function () {
                 callback(items);
             });
         });
-    };
-    SubscriptionDAO.prototype.getSubscriptionItemDetails = function (id, callback) {
+    }
+    getSubscriptionItemDetails(id, callback) {
         this.getConnection(function (connection) {
             var queryString = "Select * from SubscriptionItem where subscription_item_id = " + id;
             connection.query(queryString, function (err, rows, fields) {
@@ -35,7 +34,7 @@ var SubscriptionDAO = (function () {
                     callback(false);
                 else {
                     if (rows.length >= 1) {
-                        var item = new SubscriptionItem_1.SubscriptionItem();
+                        let item = new SubscriptionItem_1.SubscriptionItem();
                         item.subscription_id = rows[0].subscription_id;
                         item.name = rows[0].name;
                         item.introduction = rows[0].introduction;
@@ -46,8 +45,8 @@ var SubscriptionDAO = (function () {
                 connection.end();
             });
         });
-    };
-    SubscriptionDAO.prototype.getConnection = function (callback) {
+    }
+    getConnection(callback) {
         var connection = mysql.createConnection({
             host: 'localhost',
             user: 'root',
@@ -63,8 +62,7 @@ var SubscriptionDAO = (function () {
             callback(connection);
             //return connection;
         });
-    };
-    return SubscriptionDAO;
-}());
+    }
+}
 exports.SubscriptionDAO = SubscriptionDAO;
 //# sourceMappingURL=SubscriptionDAO.js.map
