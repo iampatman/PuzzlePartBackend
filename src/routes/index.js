@@ -66,6 +66,14 @@ index.post('/subscription/subscribe', function (req, res, next) {
         res.send(JSON.stringify({ returnCode: result, transaction: data }));
     });
 });
+index.post('/transaction/get', function (req, res, next) {
+    let data = JSON.parse(JSON.stringify(req.body));
+    let user_id = parseInt(data.user_id);
+    subController.getTransactionsByUserId(user_id, function (err, result) {
+        res.setHeader("content-type", "application/json");
+        res.send(JSON.stringify(result));
+    });
+});
 index.get('/pricing', function (req, res, next) {
     let id = parseInt(req.query.id);
     let data = JSON.parse(JSON.stringify(req.body));

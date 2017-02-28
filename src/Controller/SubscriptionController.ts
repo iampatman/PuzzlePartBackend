@@ -61,6 +61,10 @@ export class SubscriptionController {
         let transactionDAO = this.transactionDAO;
         //checksum
         let pricingStr = <string> (await this.pricingDAO.findPricingByPricingId(transaction.pricing_id));
+        if (pricingStr == "") {
+            callback(ReturnCode.DATA_INVALID);
+            return;
+        }
         let pricingItem = JSON.parse(pricingStr);
         if (pricingItem.subscription_id != transaction.subscription_id) {
             callback(ReturnCode.DATA_INVALID);
@@ -86,9 +90,20 @@ export class SubscriptionController {
         }
     }
 
+    getTransactionsByUserId(userId, callback) {
+        this.transactionDAO.getTransactionsByUserId(userId, (err, result) => {
+            if (err != null) {
+                callback(err, {returnCode: ReturnCode.EXCEPTION})
+            } else {
+                callback(err, {returnCode: ReturnCode.SUCCEEDED, list: result})
+            }
+        })
+
+    }
+
 
     generate_transaction_id() {
-        return Math.random().toString(16).substr(0, 9);
+        return Math.random().toString(16).substr(3, 8).toUpperCase();
     }
 
 }

@@ -55,6 +55,8 @@ export class PricingDAO extends DAOIF {
                                     subscription_id: rows[0].subscription_id
                                 }
                                 resolve(JSON.stringify(priceItem))
+                            } else {
+                                resolve("")
                             }
                         }
                         connection.end();
