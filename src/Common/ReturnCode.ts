@@ -9,5 +9,6 @@ export class ReturnCode {
     static EXCEPTION = -5000;
     static DATA_INVALID = -1001;
     static SESSION_INVALID = -1002;
+    static SESSION_TIMEOUT = -1003;
 }
 

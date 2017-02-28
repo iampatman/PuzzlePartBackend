@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const UserDAO_1 = require('../DAO/UserDAO');
-const SessionManager_1 = require("./SessionManager");
+const SessionManager_1 = require("../Common/SessionManager");
 const ReturnCode_1 = require("../Common/ReturnCode");
 class UserController {
     constructor() {

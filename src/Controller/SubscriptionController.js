@@ -12,7 +12,7 @@ const PricingDAO_1 = require("../DAO/PricingDAO");
 const TransactionDAO_1 = require("../DAO/TransactionDAO");
 const ReturnCode_1 = require("../Common/ReturnCode");
 const UtilsTS_1 = require("../Common/UtilsTS");
-const SessionManager_1 = require("./SessionManager");
+const SessionManager_1 = require("../Common/SessionManager");
 /**
  * Created by NguyenTrung on 24/2/17.
  */

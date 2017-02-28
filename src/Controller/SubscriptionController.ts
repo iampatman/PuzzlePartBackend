@@ -5,7 +5,7 @@ import {Transaction} from "../model/Transaction";
 import {ReturnCode} from "../Common/ReturnCode";
 import {} from "../Common/UtilsTS"
 import {UtilsTS} from "../Common/UtilsTS";
-import {SessionManager} from "./SessionManager";
+import {SessionManager} from "../Common/SessionManager";
 
 
 /**

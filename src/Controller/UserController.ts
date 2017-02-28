@@ -1,6 +1,6 @@
 import {User} from '../model/User';
 import {UserDAO} from '../DAO/UserDAO';
-import {SessionManager} from "./SessionManager";
+import {SessionManager} from "../Common/SessionManager";
 import {ReturnCode} from "../Common/ReturnCode";
 
 export class UserController {
