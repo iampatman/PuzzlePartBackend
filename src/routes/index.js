@@ -4,33 +4,38 @@ const User_1 = require("../model/User");
 const UserController_1 = require('../Controller/UserController');
 const SubscriptionController_1 = require('../Controller/SubscriptionController');
 const Transaction_1 = require("../model/Transaction");
+const UtilsTS_1 = require("../Common/UtilsTS");
+const ReturnCode_1 = require("../Common/ReturnCode");
 const index = express_1.Router();
 var userController = new UserController_1.UserController();
 var subController = new SubscriptionController_1.SubscriptionController();
 /* GET home page. */
-index.get('/', function (req, res, next) {
-    res.render('index', { title: 'Visual Studio Code!' });
-});
-/* GET Quick Start. */
-index.get('/quickstart', function (req, res, next) {
-    res.render('quickstart');
-});
-index.get('/user/register', function (req, res, next) {
-    let user = new User_1.User("nguyentrung0904");
-    console.log(user.username);
-    let json = JSON.stringify(user);
-    res.setHeader("content-type", "application/json");
-    res.send(user);
-});
+// index.get('/', function (req, res, next) {
+//     res.render('index', {title: 'Visual Studio Code!'});
+// });
+// /* GET Quick Start. */
+// index.get('/quickstart', function (req, res, next) {
+//     res.render('quickstart');
+// });
 index.post('/user/register', function (req, res, next) {
     let data = JSON.parse(JSON.stringify(req.body));
-    let user = new User_1.User(data.username);
-    user.password = data.password;
-    userController.registerUser(user, function (result) {
-        res.setHeader("content-type", "application/json");
-        res.send(JSON.stringify({
-            'result': result
-        }));
+    let username = data.username;
+    let password = data.password;
+    let sig = data.sig;
+    res.setHeader("content-type", "application/json");
+    UtilsTS_1.UtilsTS.validateChecksum([username, password], sig).then((validRequest) => {
+        if (validRequest == false) {
+            res.send(JSON.stringify({ returnCode: ReturnCode_1.ReturnCode.CHECKSUM_INCORRECT }));
+        }
+        else {
+            let user = new User_1.User(username);
+            user.password = password;
+            userController.registerUser(user, function (result) {
+                res.send(JSON.stringify({
+                    'result': result
+                }));
+            });
+        }
     });
 });
 index.post('/user/login', function (req, res, next) {

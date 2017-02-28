@@ -10,5 +10,6 @@ export class ReturnCode {
     static DATA_INVALID = -1001;
     static SESSION_INVALID = -1002;
     static SESSION_TIMEOUT = -1003;
+    static CHECKSUM_INCORRECT = -1004;
 }
 

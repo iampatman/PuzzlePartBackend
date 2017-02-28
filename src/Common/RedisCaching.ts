@@ -22,7 +22,6 @@ export class RedisCaching {
         return this._instance;
     }
 
-
     setCache(key, value, timeoutinsec = 1000000000) {
         let valueObject = JSON.stringify(value);
         this.client.set(key, value, Redis.print);
