@@ -46,8 +46,13 @@ export class SubscriptionController {
     //     })
     // }
     getPricingDetails(id: number, callback) {
-        this.pricingDAO.findPricingBySubscriptionId(id, function (list) {
-            callback({returnCode: ReturnCode.SUCCEEDED, list: list})
+        this.pricingDAO.findPricingBySubscriptionId(id, function (err, list) {
+            let returnCode = ReturnCode.SUCCEEDED
+            if (err != null) {
+                returnCode = ReturnCode.EXCEPTION;
+            }
+            callback({returnCode: returnCode, list: list})
+
         })
     }
 

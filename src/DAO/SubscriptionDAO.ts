@@ -1,5 +1,6 @@
 
 import { SubscriptionItem } from '../model/SubscriptionItem';
+import {DAOIF} from "./DAOIF";
 
 var mysql = require('mysql');
 
@@ -9,14 +10,14 @@ var mysql = require('mysql');
 
 
 /* ES6: */
-export class SubscriptionDAO{
+export class SubscriptionDAO extends DAOIF{
 
     constructor(){
-
+        super()
     }
 
     getSubscriptionItemListByCat(category: number, callback){
-        this.getConnection(function (connection) {
+        super.getConnection(function (connection) {
             var queryString = "select * from SubscriptionItem s LEFT JOIN Company c On s.company_id = c.company_id ";
             var items = [];
             connection.query(queryString, function (err, rows, fields) {
@@ -42,7 +43,7 @@ export class SubscriptionDAO{
 
 
     getSubscriptionItemDetails(id: number, callback){
-        this.getConnection(function (connection) {
+        super.getConnection(function (connection) {
             var queryString = "Select * from SubscriptionItem where subscription_item_id = " + id;
 
             connection.query(queryString, function (err, rows, fields) {
@@ -65,23 +66,4 @@ export class SubscriptionDAO{
         })
     }
 
-    getConnection(callback){
-        var connection = mysql.createConnection(
-            {
-                host     : 'localhost',
-                user     : 'root',
-                password : '123',
-                database : 'Puzzle',
-            }
-        );
-        connection.connect(function(err) {
-            if (err) {
-                console.error('error connecting: ' + err.stack);
-                return;
-            }
-            console.log('connected as id ' + connection.threadId);
-            callback(connection);
-            //return connection;
-        });
-    }
 }

@@ -86,22 +86,38 @@ index.post('/subscription/subscribe', function (req, res, next) {
     transaction.pricing_id = parseInt(data.pricing_id);
     transaction.subscription_id = parseInt(data.subscription_id);
     let sessionID = data.sessionID;
-    subController.subscribe(transaction, function (result, data) {
-        res.setHeader("content-type", "application/json");
-        res.send(JSON.stringify({ returnCode: result, transaction: data }));
+    let sig = data.sig;
+    UtilsTS_1.UtilsTS.validateChecksum([transaction.user_id, transaction.pricing_id, transaction.subscription_id, sessionID], sig).then((validRequest) => {
+        if (validRequest == false) {
+            res.send(JSON.stringify({ returnCode: ReturnCode_1.ReturnCode.CHECKSUM_INCORRECT }));
+        }
+        else {
+            subController.subscribe(transaction, function (result, data) {
+                res.setHeader("content-type", "application/json");
+                res.send(JSON.stringify({ returnCode: result, transaction: data }));
+            });
+        }
     });
 });
 index.post('/transaction/get', function (req, res, next) {
     let data = JSON.parse(JSON.stringify(req.body));
     let user_id = parseInt(data.user_id);
-    subController.getTransactionsByUserId(user_id, function (err, result) {
-        res.setHeader("content-type", "application/json");
-        res.send(JSON.stringify(result));
+    let sessionID = data.sessionID;
+    let sig = data.sig;
+    res.setHeader("content-type", "application/json");
+    UtilsTS_1.UtilsTS.validateChecksum([user_id, sessionID], sig).then((validRequest) => {
+        if (validRequest == false) {
+            res.send(JSON.stringify({ returnCode: ReturnCode_1.ReturnCode.CHECKSUM_INCORRECT }));
+        }
+        else {
+            subController.getTransactionsByUserId(user_id, function (err, result) {
+                res.send(JSON.stringify(result));
+            });
+        }
     });
 });
 index.get('/pricing', function (req, res, next) {
     let id = parseInt(req.query.id);
-    let data = JSON.parse(JSON.stringify(req.body));
     subController.getPricingDetails(id, function (result) {
         res.setHeader("content-type", "application/json");
         res.send(JSON.stringify(result));

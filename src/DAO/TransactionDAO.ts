@@ -62,7 +62,6 @@ export class TransactionDAO extends DAOIF {
                     connection.end();
                     callback(null, items)
                 }
-
             })
         })
     }

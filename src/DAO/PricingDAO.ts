@@ -19,8 +19,10 @@ export class PricingDAO extends DAOIF {
                 var queryString = "Select * from Pricing WHERE subscription_id = " + id;
                 var pricelist = []
                 connection.query(queryString, function (err, rows, fields) {
-                    if (err)
-                        callback(false)
+                    if (err) {
+                        console.error(err)
+                        callback(err, null)
+                    }
                     else {
                         for (var i in rows) {
                             var priceItem = {
@@ -30,10 +32,9 @@ export class PricingDAO extends DAOIF {
                             }
                             pricelist.push(priceItem);
                         }
+                        callback(null, pricelist)
                     }
                     connection.end();
-                    callback(pricelist)
-                    return pricelist;
                 });
             }
         )

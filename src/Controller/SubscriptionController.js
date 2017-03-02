@@ -44,8 +44,12 @@ class SubscriptionController {
     //     })
     // }
     getPricingDetails(id, callback) {
-        this.pricingDAO.findPricingBySubscriptionId(id, function (list) {
-            callback({ returnCode: ReturnCode_1.ReturnCode.SUCCEEDED, list: list });
+        this.pricingDAO.findPricingBySubscriptionId(id, function (err, list) {
+            let returnCode = ReturnCode_1.ReturnCode.SUCCEEDED;
+            if (err != null) {
+                returnCode = ReturnCode_1.ReturnCode.EXCEPTION;
+            }
+            callback({ returnCode: returnCode, list: list });
         });
     }
     subscribe(transaction, callback) {
