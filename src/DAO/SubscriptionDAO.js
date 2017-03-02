@@ -1,12 +1,14 @@
 "use strict";
 const SubscriptionItem_1 = require('../model/SubscriptionItem');
+const DAOIF_1 = require("./DAOIF");
 var mysql = require('mysql');
 /* ES6: */
-class SubscriptionDAO {
+class SubscriptionDAO extends DAOIF_1.DAOIF {
     constructor() {
+        super();
     }
     getSubscriptionItemListByCat(category, callback) {
-        this.getConnection(function (connection) {
+        super.getConnection(function (connection) {
             var queryString = "select * from SubscriptionItem s LEFT JOIN Company c On s.company_id = c.company_id ";
             var items = [];
             connection.query(queryString, function (err, rows, fields) {
@@ -29,7 +31,7 @@ class SubscriptionDAO {
         });
     }
     getSubscriptionItemDetails(id, callback) {
-        this.getConnection(function (connection) {
+        super.getConnection(function (connection) {
             var queryString = "Select * from SubscriptionItem where subscription_item_id = " + id;
             connection.query(queryString, function (err, rows, fields) {
                 if (err)
@@ -46,23 +48,6 @@ class SubscriptionDAO {
                 }
                 connection.end();
             });
-        });
-    }
-    getConnection(callback) {
-        var connection = mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: '123',
-            database: 'Puzzle',
-        });
-        connection.connect(function (err) {
-            if (err) {
-                console.error('error connecting: ' + err.stack);
-                return;
-            }
-            console.log('connected as id ' + connection.threadId);
-            callback(connection);
-            //return connection;
         });
     }
 }

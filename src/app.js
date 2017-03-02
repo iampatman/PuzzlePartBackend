@@ -6,12 +6,6 @@ const path_1 = require('path');
 const index_1 = require('./routes/index');
 const user_1 = require('./routes/user');
 const cookieParser = require('cookie-parser'); // this module doesn't use the ES6 default export yet
-exports.mysql_info = {
-    host: 'localhost',
-    user: 'root',
-    password: '123',
-    database: 'Puzzle',
-};
 const app = express();
 // view engine setup
 app.set('views', path_1.join(__dirname, 'views'));

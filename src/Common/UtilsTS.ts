@@ -17,10 +17,10 @@ export class UtilsTS {
             string += param;
             string += "|"
         }
-        const hash = Crypto.createHmac('sha256', UtilsTS.SECRET_KEY)
+        string += UtilsTS.SECRET_KEY
+        const hash = Crypto.createHash('sha256')
             .update(string)
             .digest('hex');
-        console.log(hash);
         callback(null, hash.toUpperCase())
     }
 

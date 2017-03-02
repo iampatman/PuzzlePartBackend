@@ -5,12 +5,6 @@ import {join} from 'path';
 import index from './routes/index';
 import user from './routes/user';
 import cookieParser = require('cookie-parser'); // this module doesn't use the ES6 default export yet
-export var mysql_info = {
-    host: 'localhost',
-    user: 'root',
-    password: '123',
-    database: 'Puzzle',
-}
 
 
 const app: express.Express = express();
