@@ -17,7 +17,7 @@ export class SubscriptionDAO{
 
     getSubscriptionItemListByCat(category: number, callback){
         this.getConnection(function (connection) {
-            var queryString = "Select * from SubscriptionItem";
+            var queryString = "select * from SubscriptionItem s LEFT JOIN Company c On s.company_id = c.company_id ";
             var items = [];
             connection.query(queryString, function (err, rows, fields) {
                 if (err)
@@ -29,6 +29,8 @@ export class SubscriptionDAO{
                     item.introduction = rows[i].introduction;
                     item.rating = rows[i].rating;
                     item.smallImage = rows[i].small_image;
+                    item.companyId = rows[i].company_id;
+                    item.companyName = rows[i].name
                     items.push(item)
                 }
                 connection.end();

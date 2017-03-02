@@ -12,11 +12,6 @@ exports.mysql_info = {
     password: '123',
     database: 'Puzzle',
 };
-// export var MongoClient = require('mongodb').MongoClient
-// export var assert = require('assert');
-//
-// // Connection URL
-// export var url = 'mongodb://localhost:27017/PuzzleDB';
 const app = express();
 // view engine setup
 app.set('views', path_1.join(__dirname, 'views'));

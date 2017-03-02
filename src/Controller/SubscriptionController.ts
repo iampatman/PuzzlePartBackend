@@ -29,10 +29,9 @@ export class SubscriptionController {
     async getSubscriptionItemList(data, callback) {
         let username = data.username;
         let sessionID = data.sessionID;
-        let sessionValid = <Boolean> (await SessionManager.getInstance().checkSessionID(sessionID, username))
-
-        if (sessionValid == false) {
-            callback(null, {returnCode: ReturnCode.SESSION_INVALID})
+        let sessionValid = <number> (await SessionManager.getInstance().checkSessionID(sessionID, username))
+        if (sessionValid != ReturnCode.SUCCEEDED) {
+            callback(null, {returnCode: sessionValid})
         } else {
             this.subDAO.getSubscriptionItemListByCat(-1, function (list) {
                 callback(null, {returnCode: ReturnCode.SUCCEEDED, list: list})

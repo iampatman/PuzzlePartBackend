@@ -22,7 +22,7 @@ export class RedisCaching {
         return this._instance;
     }
 
-    setCache(key, value, timeoutinsec = 1000000000) {
+    setCache(key, value, timeoutinsec = 10000000) {
         let valueObject = JSON.stringify(value);
         this.client.set(key, value, Redis.print);
         this.client.expire(key, timeoutinsec)
@@ -30,10 +30,10 @@ export class RedisCaching {
 
     getCache(key, callback) {
         this.client.get(key, function (err, value) {
-            if (err != null) {
+            if (err == null) {
                 console.log(value);
-                let valueObject = JSON.stringify(value);
-                callback(null, valueObject)
+                //let valueObject = JSON.stringify(value);
+                callback(null, value)
             } else {
                 callback(err, null)
             }

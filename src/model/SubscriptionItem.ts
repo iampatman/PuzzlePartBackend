@@ -7,7 +7,8 @@ export class SubscriptionItem{
     smallImage: string;
     introduction: string;
     rating: number;
-
+    companyName: string;
+    companyId: string;
     constructor(){
     }
 }

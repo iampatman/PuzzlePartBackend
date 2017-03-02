@@ -12,12 +12,6 @@ export var mysql_info = {
     database: 'Puzzle',
 }
 
-// export var MongoClient = require('mongodb').MongoClient
-// export var assert = require('assert');
-//
-// // Connection URL
-// export var url = 'mongodb://localhost:27017/PuzzleDB';
-
 
 const app: express.Express = express();
 

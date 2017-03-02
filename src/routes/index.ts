@@ -23,16 +23,19 @@ var subController = new SubscriptionController();
 
 index.post('/user/register', function (req, res, next) {
     let data = JSON.parse(JSON.stringify(req.body))
-    let username = data.username;
+    let mobileNumber = data.mobileNumber;
     let password = data.password;
+    let email = data.email;
+    let fullname = data.fullname;
     let sig = data.sig
     res.setHeader("content-type", "application/json");
-    UtilsTS.validateChecksum([username, password], sig).then((validRequest) => {
+    UtilsTS.validateChecksum([mobileNumber, password, email, fullname], sig).then((validRequest) => {
         if (validRequest == false) {
             res.send(JSON.stringify({returnCode: ReturnCode.CHECKSUM_INCORRECT}))
         } else {
-            let user = new User(username);
+            let user = new User(mobileNumber);
             user.password = password
+            user.email = email;
             userController.registerUser(user, function (result) {
                 res.send(JSON.stringify({
                     'returnCode': result

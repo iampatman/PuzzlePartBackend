@@ -27,8 +27,8 @@ class SubscriptionController {
             let username = data.username;
             let sessionID = data.sessionID;
             let sessionValid = (yield SessionManager_1.SessionManager.getInstance().checkSessionID(sessionID, username));
-            if (sessionValid == false) {
-                callback(null, { returnCode: ReturnCode_1.ReturnCode.SESSION_INVALID });
+            if (sessionValid != ReturnCode_1.ReturnCode.SUCCEEDED) {
+                callback(null, { returnCode: sessionValid });
             }
             else {
                 this.subDAO.getSubscriptionItemListByCat(-1, function (list) {

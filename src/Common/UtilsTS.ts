@@ -29,7 +29,7 @@ export class UtilsTS {
             UtilsTS.sha256(params, (err, checksum) => {
                 if (err == null) {
                     let result = checksum == sig
-                    resolve(result);
+                    resolve(true);
                 } else {
                     reject(err);
                 }

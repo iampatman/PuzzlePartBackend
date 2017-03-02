@@ -19,20 +19,23 @@ var subController = new SubscriptionController_1.SubscriptionController();
 // });
 index.post('/user/register', function (req, res, next) {
     let data = JSON.parse(JSON.stringify(req.body));
-    let username = data.username;
+    let mobileNumber = data.mobileNumber;
     let password = data.password;
+    let email = data.email;
+    let fullname = data.fullname;
     let sig = data.sig;
     res.setHeader("content-type", "application/json");
-    UtilsTS_1.UtilsTS.validateChecksum([username, password], sig).then((validRequest) => {
+    UtilsTS_1.UtilsTS.validateChecksum([mobileNumber, password, email, fullname], sig).then((validRequest) => {
         if (validRequest == false) {
             res.send(JSON.stringify({ returnCode: ReturnCode_1.ReturnCode.CHECKSUM_INCORRECT }));
         }
         else {
-            let user = new User_1.User(username);
+            let user = new User_1.User(mobileNumber);
             user.password = password;
+            user.email = email;
             userController.registerUser(user, function (result) {
                 res.send(JSON.stringify({
-                    'result': result
+                    'returnCode': result
                 }));
             });
         }
@@ -42,21 +45,37 @@ index.post('/user/login', function (req, res, next) {
     let data = JSON.parse(JSON.stringify(req.body));
     let username = data.username;
     let password = data.password;
-    userController.login(username, password, function (err, result) {
-        if (err == null) {
-            res.setHeader("content-type", "application/json");
-            res.send(JSON.stringify(result));
+    let sig = data.sig;
+    res.setHeader("content-type", "application/json");
+    UtilsTS_1.UtilsTS.validateChecksum([username, password], sig).then((validRequest) => {
+        if (validRequest == false) {
+            res.send(JSON.stringify({ returnCode: ReturnCode_1.ReturnCode.CHECKSUM_INCORRECT }));
+        }
+        else {
+            userController.login(username, password, function (err, result) {
+                if (err == null) {
+                    res.send(JSON.stringify(result));
+                }
+            });
         }
     });
 });
-index.post('/subscription/get', function (req, res, next) {
+index.post('/subscription/getlist', function (req, res, next) {
     let data = JSON.parse(JSON.stringify(req.body));
     let username = data.username;
     let sessionID = data.sessionID;
-    subController.getSubscriptionItemList(data, function (error, result) {
-        if (error == null) {
-            res.setHeader("content-type", "application/json");
-            res.send(JSON.stringify(result));
+    let sig = data.sig;
+    res.setHeader("content-type", "application/json");
+    UtilsTS_1.UtilsTS.validateChecksum([username, sessionID], sig).then((validRequest) => {
+        if (validRequest == false) {
+            res.send(JSON.stringify({ returnCode: ReturnCode_1.ReturnCode.CHECKSUM_INCORRECT }));
+        }
+        else {
+            subController.getSubscriptionItemList(data, function (error, result) {
+                if (error == null) {
+                    res.send(JSON.stringify(result));
+                }
+            });
         }
     });
 });
@@ -66,6 +85,7 @@ index.post('/subscription/subscribe', function (req, res, next) {
     transaction.user_id = parseInt(data.user_id);
     transaction.pricing_id = parseInt(data.pricing_id);
     transaction.subscription_id = parseInt(data.subscription_id);
+    let sessionID = data.sessionID;
     subController.subscribe(transaction, function (result, data) {
         res.setHeader("content-type", "application/json");
         res.send(JSON.stringify({ returnCode: result, transaction: data }));
