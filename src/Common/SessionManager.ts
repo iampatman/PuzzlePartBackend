@@ -24,20 +24,22 @@ export class SessionManager {
     async getSessionID(username) {
         return new Promise((resolve, reject) => {
             let sessionID = username + "-123-ABC"
-            RedisCaching.getInstance().setCache(sessionID, username, UtilsTS.SESSION_TTL_IN_SECOND);
-            resolve(sessionID);
+            UtilsTS.encrypt(sessionID).then((encryptedSessionID) => {
+                RedisCaching.getInstance().setCache(encryptedSessionID, username, UtilsTS.SESSION_TTL_IN_SECOND);
+                resolve(encryptedSessionID);
+            });
         });
     }
 
     async checkSessionID(sessionId, username) {
         return new Promise((resolve, reject) => {
             RedisCaching.getInstance().getCache(sessionId, (err, value) => {
-                if (err){
+                if (err) {
                     reject(err);
                 } else {
-                    if (value == null){
+                    if (value == null) {
                         resolve(ReturnCode.SESSION_TIMEOUT);
-                    } else if (value == username){
+                    } else if (value == username) {
                         resolve(ReturnCode.SUCCEEDED);
                     } else {
                         resolve(ReturnCode.SESSION_INVALID);

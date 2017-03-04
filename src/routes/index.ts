@@ -5,11 +5,13 @@ import {SubscriptionController} from '../Controller/SubscriptionController';
 import {Transaction} from "../model/Transaction";
 import {UtilsTS} from "../Common/UtilsTS";
 import {ReturnCode} from "../Common/ReturnCode";
+import {TransactionController} from "../Controller/TransactionController";
 
 
 const index = Router();
 var userController = new UserController();
 var subController = new SubscriptionController();
+var transController = new TransactionController();
 
 /* GET home page. */
 // index.get('/', function (req, res, next) {
@@ -115,7 +117,7 @@ index.post('/transaction/get', function (req, res, next) {
         if (validRequest == false) {
             res.send(JSON.stringify({returnCode: ReturnCode.CHECKSUM_INCORRECT}))
         } else {
-            subController.getTransactionsByUserId(user_id, function (err, result) {
+            transController.getTransactionsByUserId(user_id, function (err, result) {
                 res.send(JSON.stringify(result))
             })
         }

@@ -37,7 +37,37 @@ export class UtilsTS {
         });
 
     }
+
+
+    static async encrypt(str) {
+        var crypto = require('crypto'),
+            algorithm = 'aes-256-ctr',
+            password = UtilsTS.SECRET_KEY;
+        return new Promise((solve, reject) => {
+            var cipher = crypto.createCipher(algorithm, password)
+            var crypted = cipher.update(str, 'utf8', 'hex')
+            crypted += cipher.final('hex');
+            solve(crypted)
+        });
+
+    }
+
+    static async decrypt(text) {
+        var crypto = require('crypto'),
+            algorithm = 'aes-256-ctr',
+            password = UtilsTS.SECRET_KEY;
+        return new Promise((solve, reject) => {
+            var decipher = crypto.createDecipher(algorithm, password)
+            var dec = decipher.update(text, 'hex', 'utf8')
+            dec += decipher.final('utf8');
+            solve(dec)
+        });
+
+    }
 }
 
 
 
+UtilsTS.decrypt("5cdf83c3722120227d18b65ebfc23eb8").then((value) => {
+    console.log(value)
+})

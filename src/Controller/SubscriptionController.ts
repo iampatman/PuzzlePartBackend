@@ -25,7 +25,6 @@ export class SubscriptionController {
 
     }
 
-
     async getSubscriptionItemList(data, callback) {
         let username = data.username;
         let sessionID = data.sessionID;
@@ -92,17 +91,6 @@ export class SubscriptionController {
 
             })
         }
-    }
-
-    getTransactionsByUserId(userId, callback) {
-        this.transactionDAO.getTransactionsByUserId(userId, (err, result) => {
-            if (err != null) {
-                callback(err, {returnCode: ReturnCode.EXCEPTION})
-            } else {
-                callback(err, {returnCode: ReturnCode.SUCCEEDED, list: result})
-            }
-        })
-
     }
 
 
