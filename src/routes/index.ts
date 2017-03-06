@@ -25,19 +25,18 @@ var transController = new TransactionController();
 
 index.post('/user/register', function (req, res, next) {
     let data = JSON.parse(JSON.stringify(req.body))
-    let mobileNumber = data.mobileNumber;
+    let mobilePhone = data.mobilePhone;
     let password = data.password;
-    let email = data.email;
-    let fullname = data.fullname;
+    let name = data.name;
     let sig = data.sig
     res.setHeader("content-type", "application/json");
-    UtilsTS.validateChecksum([mobileNumber, password, email, fullname], sig).then((validRequest) => {
+    UtilsTS.validateChecksum([mobilePhone, password, name], sig).then((validRequest) => {
         if (validRequest == false) {
             res.send(JSON.stringify({returnCode: ReturnCode.CHECKSUM_INCORRECT}))
         } else {
-            let user = new User(mobileNumber);
+            let user = new User(mobilePhone);
             user.password = password
-            user.email = email;
+            user.name = name
             userController.registerUser(user, function (result) {
                 res.send(JSON.stringify({
                     'returnCode': result
@@ -50,15 +49,15 @@ index.post('/user/register', function (req, res, next) {
 
 index.post('/user/login', function (req, res, next) {
     let data = JSON.parse(JSON.stringify(req.body))
-    let username = data.username;
+    let mobilePhone = data.mobilePhone;
     let password = data.password;
     let sig = data.sig
     res.setHeader("content-type", "application/json");
-    UtilsTS.validateChecksum([username, password], sig).then((validRequest) => {
+    UtilsTS.validateChecksum([mobilePhone, password], sig).then((validRequest) => {
         if (validRequest == false) {
             res.send(JSON.stringify({returnCode: ReturnCode.CHECKSUM_INCORRECT}))
         } else {
-            userController.login(username, password, function (err, result) {
+            userController.login(mobilePhone, password, function (err, result) {
                 if (err == null) {
                     res.send(JSON.stringify(result))
                 }

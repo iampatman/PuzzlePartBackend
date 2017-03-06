@@ -3,7 +3,6 @@ import {PricingDAO} from "../DAO/PricingDAO";
 import {TransactionDAO} from "../DAO/TransactionDAO";
 import {Transaction} from "../model/Transaction";
 import {ReturnCode} from "../Common/ReturnCode";
-import {} from "../Common/UtilsTS"
 import {UtilsTS} from "../Common/UtilsTS";
 import {SessionManager} from "../Common/SessionManager";
 

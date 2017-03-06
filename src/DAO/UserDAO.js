@@ -13,19 +13,19 @@ var mysql = require('mysql');
 class UserDAO {
     constructor() {
     }
-    findUserByUsername(username) {
+    findUserByUsername(mobilePhone) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     this.getConnection(function (connection) {
-                        var queryString = "Select * from User where username = " + username;
-                        var user = new User_1.User(username);
+                        var queryString = "Select * from User where mobile_phone = " + mobilePhone;
+                        var user = new User_1.User(mobilePhone);
                         connection.query(queryString, function (err, rows, fields) {
                             if (err)
                                 reject(err);
                             for (var i in rows) {
-                                console.log('Post Titles: ', rows[i].username);
-                                if (rows[i].username == username) {
+                                console.log('Post Titles: ', rows[i].mobilePhone);
+                                if (rows[i].mobilePhone == mobilePhone) {
                                     user.password = rows[i].password;
                                     break;
                                 }
@@ -41,15 +41,15 @@ class UserDAO {
     saveUser(user, callback) {
         this.getConnection(function (connection) {
             var sql = "INSERT INTO User SET ?";
-            var values = { username: user.username, password: user.password };
-            connection.query(sql, values, function (err, rows, fields) {
+            var values = { mobile_phone: user.mobilePhone, password: user.password, name: user.name };
+            connection.query(sql, values, function (err, rows) {
                 if (err) {
                     console.log(err.toString());
-                    callback(false);
+                    callback(err, false);
                 }
                 let result = rows.affectedRows != 0;
                 connection.end();
-                callback(result);
+                callback(null, result);
             });
         });
     }

@@ -90,16 +90,6 @@ class SubscriptionController {
             }
         });
     }
-    getTransactionsByUserId(userId, callback) {
-        this.transactionDAO.getTransactionsByUserId(userId, (err, result) => {
-            if (err != null) {
-                callback(err, { returnCode: ReturnCode_1.ReturnCode.EXCEPTION });
-            }
-            else {
-                callback(err, { returnCode: ReturnCode_1.ReturnCode.SUCCEEDED, list: result });
-            }
-        });
-    }
     generate_transaction_id() {
         return Math.random().toString(16).substr(3, 8).toUpperCase();
     }

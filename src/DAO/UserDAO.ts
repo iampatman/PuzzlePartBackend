@@ -10,18 +10,18 @@ export class UserDAO {
 
     }
 
-    async findUserByUsername(username: string) {
+    async findUserByUsername(mobilePhone: string) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 this.getConnection(function (connection) {
-                    var queryString = "Select * from User where username = " + username;
-                    var user = new User(username);
+                    var queryString = "Select * from User where mobile_phone = " + mobilePhone;
+                    var user = new User(mobilePhone);
                     connection.query(queryString, function (err, rows, fields) {
                         if (err)
                             reject(err)
                         for (var i in rows) {
-                            console.log('Post Titles: ', rows[i].username);
-                            if (rows[i].username == username) {
+                            console.log('Post Titles: ', rows[i].mobile_phone);
+                            if (rows[i].mobile_phone == mobilePhone) {
                                 user.password = rows[i].password
                                 break;
                             }
@@ -37,15 +37,15 @@ export class UserDAO {
     saveUser(user: User, callback) {
         this.getConnection(function (connection) {
             var sql = "INSERT INTO User SET ?";
-            var values = {username: user.username, password: user.password};
-            connection.query(sql, values, function (err, rows, fields) {
+            var values = {mobile_phone: user.mobilePhone, password: user.password, name: user.name};
+            connection.query(sql, values, function (err, rows) {
                 if (err) {
                     console.log(err.toString());
-                    callback(false)
+                    callback(err, false)
                 }
                 let result = rows.affectedRows != 0
                 connection.end();
-                callback(result)
+                callback(null, result)
             })
         })
     }

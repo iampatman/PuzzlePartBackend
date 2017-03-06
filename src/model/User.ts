@@ -2,16 +2,11 @@ export class User{
     userId: number;
     username: string;
     password: string;
+    name: string;
     email: string;
     mobilePhone: string;
-
-    constructor(username: string){
-        this.username = username;
+    constructor(mobilePhone: string){
+        this.mobilePhone = mobilePhone;
     }
 }
-
-let user = new User("Nguen");
-user.userId = 3;
-console.log(user.userId)
-
 

@@ -6,9 +6,11 @@ const SubscriptionController_1 = require('../Controller/SubscriptionController')
 const Transaction_1 = require("../model/Transaction");
 const UtilsTS_1 = require("../Common/UtilsTS");
 const ReturnCode_1 = require("../Common/ReturnCode");
+const TransactionController_1 = require("../Controller/TransactionController");
 const index = express_1.Router();
 var userController = new UserController_1.UserController();
 var subController = new SubscriptionController_1.SubscriptionController();
+var transController = new TransactionController_1.TransactionController();
 /* GET home page. */
 // index.get('/', function (req, res, next) {
 //     res.render('index', {title: 'Visual Studio Code!'});
@@ -19,20 +21,19 @@ var subController = new SubscriptionController_1.SubscriptionController();
 // });
 index.post('/user/register', function (req, res, next) {
     let data = JSON.parse(JSON.stringify(req.body));
-    let mobileNumber = data.mobileNumber;
+    let mobilePhone = data.mobilePhone;
     let password = data.password;
-    let email = data.email;
-    let fullname = data.fullname;
+    let name = data.name;
     let sig = data.sig;
     res.setHeader("content-type", "application/json");
-    UtilsTS_1.UtilsTS.validateChecksum([mobileNumber, password, email, fullname], sig).then((validRequest) => {
+    UtilsTS_1.UtilsTS.validateChecksum([mobilePhone, password, name], sig).then((validRequest) => {
         if (validRequest == false) {
             res.send(JSON.stringify({ returnCode: ReturnCode_1.ReturnCode.CHECKSUM_INCORRECT }));
         }
         else {
-            let user = new User_1.User(mobileNumber);
+            let user = new User_1.User(mobilePhone);
             user.password = password;
-            user.email = email;
+            user.name = name;
             userController.registerUser(user, function (result) {
                 res.send(JSON.stringify({
                     'returnCode': result
@@ -43,16 +44,16 @@ index.post('/user/register', function (req, res, next) {
 });
 index.post('/user/login', function (req, res, next) {
     let data = JSON.parse(JSON.stringify(req.body));
-    let username = data.username;
+    let mobilePhone = data.mobilePhone;
     let password = data.password;
     let sig = data.sig;
     res.setHeader("content-type", "application/json");
-    UtilsTS_1.UtilsTS.validateChecksum([username, password], sig).then((validRequest) => {
+    UtilsTS_1.UtilsTS.validateChecksum([mobilePhone, password], sig).then((validRequest) => {
         if (validRequest == false) {
             res.send(JSON.stringify({ returnCode: ReturnCode_1.ReturnCode.CHECKSUM_INCORRECT }));
         }
         else {
-            userController.login(username, password, function (err, result) {
+            userController.login(mobilePhone, password, function (err, result) {
                 if (err == null) {
                     res.send(JSON.stringify(result));
                 }
@@ -110,7 +111,7 @@ index.post('/transaction/get', function (req, res, next) {
             res.send(JSON.stringify({ returnCode: ReturnCode_1.ReturnCode.CHECKSUM_INCORRECT }));
         }
         else {
-            subController.getTransactionsByUserId(user_id, function (err, result) {
+            transController.getTransactionsByUserId(user_id, function (err, result) {
                 res.send(JSON.stringify(result));
             });
         }
