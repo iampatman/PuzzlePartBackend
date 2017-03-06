@@ -31,7 +31,7 @@ export class SessionManager {
         });
     }
 
-    async checkSessionID(sessionId, username) {
+    async checkSessionID(sessionId, mobilePhone) {
         return new Promise((resolve, reject) => {
             RedisCaching.getInstance().getCache(sessionId, (err, value) => {
                 if (err) {
@@ -39,7 +39,7 @@ export class SessionManager {
                 } else {
                     if (value == null) {
                         resolve(ReturnCode.SESSION_TIMEOUT);
-                    } else if (value == username) {
+                    } else if (value == mobilePhone) {
                         resolve(ReturnCode.SUCCEEDED);
                     } else {
                         resolve(ReturnCode.SESSION_INVALID);

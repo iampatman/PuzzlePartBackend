@@ -24,9 +24,9 @@ class SubscriptionController {
     }
     getSubscriptionItemList(data, callback) {
         return __awaiter(this, void 0, void 0, function* () {
-            let username = data.username;
+            let mobilePhone = data.mobilePhone;
             let sessionID = data.sessionID;
-            let sessionValid = (yield SessionManager_1.SessionManager.getInstance().checkSessionID(sessionID, username));
+            let sessionValid = (yield SessionManager_1.SessionManager.getInstance().checkSessionID(sessionID, mobilePhone));
             if (sessionValid != ReturnCode_1.ReturnCode.SUCCEEDED) {
                 callback(null, { returnCode: sessionValid });
             }

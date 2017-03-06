@@ -24,8 +24,8 @@ class UserDAO {
                             if (err)
                                 reject(err);
                             for (var i in rows) {
-                                console.log('Post Titles: ', rows[i].mobilePhone);
-                                if (rows[i].mobilePhone == mobilePhone) {
+                                console.log('Post Titles: ', rows[i].mobile_phone);
+                                if (rows[i].mobile_phone == mobilePhone) {
                                     user.password = rows[i].password;
                                     break;
                                 }

@@ -25,9 +25,9 @@ export class SubscriptionController {
     }
 
     async getSubscriptionItemList(data, callback) {
-        let username = data.username;
+        let mobilePhone = data.mobilePhone;
         let sessionID = data.sessionID;
-        let sessionValid = <number> (await SessionManager.getInstance().checkSessionID(sessionID, username))
+        let sessionValid = <number> (await SessionManager.getInstance().checkSessionID(sessionID, mobilePhone))
         if (sessionValid != ReturnCode.SUCCEEDED) {
             callback(null, {returnCode: sessionValid})
         } else {
