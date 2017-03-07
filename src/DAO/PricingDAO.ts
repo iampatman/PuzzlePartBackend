@@ -1,4 +1,5 @@
 import {DAOIF} from "./DAOIF";
+import {Pricing} from "../model/Pricing";
 /**
  * Created by NguyenTrung on 25/2/17.
  */
@@ -14,30 +15,32 @@ export class PricingDAO extends DAOIF {
         super();
     }
 
-    findPricingBySubscriptionId(id: number, callback) {
-        super.getConnection(function (connection) {
-                var queryString = "Select * from Pricing WHERE subscription_id = " + id;
-                var pricelist = []
-                connection.query(queryString, function (err, rows, fields) {
-                    if (err) {
-                        console.error(err)
-                        callback(err, null)
-                    }
-                    else {
-                        for (var i in rows) {
-                            var priceItem = {
-                                pricing_id: rows[i].pricing_id,
-                                quantity: rows[i].quantity,
-                                price: rows[i].price
-                            }
-                            pricelist.push(priceItem);
+    async findPricingBySubscriptionId(id: number) {
+        return new Promise((resolve, reject) => {
+            super.getConnection(function (connection) {
+                    var queryString = "Select * from Pricing WHERE subscription_id = " + id;
+                    var pricinglist = []
+                    connection.query(queryString, function (err, rows, fields) {
+                        if (err) {
+                            console.error(err)
+                            reject(err)
                         }
-                        callback(null, pricelist)
-                    }
-                    connection.end();
-                });
-            }
-        )
+                        else {
+                            for (var i in rows) {
+                                let item = new Pricing();
+                                item.pricing_id = rows[i].pricing_id
+                                item.quantity = rows[i].quantity
+                                item.price = rows[i].price
+                                item.subscription_id = id
+                                pricinglist.push(item);
+                            }
+                            resolve(pricinglist)
+                        }
+                        connection.end();
+                    });
+                }
+            )
+        })
     }
 
     async findPricingByPricingId(id: number) {

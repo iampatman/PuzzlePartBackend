@@ -11,6 +11,7 @@ export class SubscriptionItem{
     rating: number;
     companyName: string;
     companyId: string;
+    itemDescription: string;
     details: [SubscriptionDetail];
     discounts: [Discount];
 

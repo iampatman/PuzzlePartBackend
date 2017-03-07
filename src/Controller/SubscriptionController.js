@@ -47,17 +47,22 @@ class SubscriptionController {
                 callback(null, { returnCode: sessionValid });
             }
             else {
-                let returnCode = ReturnCode_1.ReturnCode.FAILED;
-                let discountList = yield this.subDAO.getDiscountDetailsBySubId(subscription_id);
-                let productList = yield this.subDAO.getSubscriptionItemDetails(subscription_id);
+                let returnCode = ReturnCode_1.ReturnCode.SUCCEEDED;
+                let discountList = (yield this.subDAO.getDiscountDetailsBySubId(subscription_id));
+                let pricingList = (yield this.pricingDAO.findPricingBySubscriptionId(subscription_id));
+                let productList = (yield this.subDAO.getSubscriptionItemDetails(subscription_id));
                 if (discountList == null || productList == null) {
                     returnCode = ReturnCode_1.ReturnCode.EXCEPTION;
                     callback(null, { returnCode: returnCode });
                 }
                 else {
+                    if (pricingList.length == 0) {
+                        returnCode = ReturnCode_1.ReturnCode.SUBSCRIPTION_ID_INVALID;
+                    }
                     callback(null, {
                         returnCode: returnCode,
                         id: subscription_id,
+                        pricingList: pricingList,
                         discountList: discountList,
                         productList: productList
                     });
@@ -66,12 +71,13 @@ class SubscriptionController {
         });
     }
     getPricingDetails(id, callback) {
-        this.pricingDAO.findPricingBySubscriptionId(id, function (err, list) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let pricingList = (yield this.pricingDAO.findPricingBySubscriptionId(id));
             let returnCode = ReturnCode_1.ReturnCode.SUCCEEDED;
-            if (err != null) {
+            if (pricingList == null) {
                 returnCode = ReturnCode_1.ReturnCode.EXCEPTION;
             }
-            callback({ returnCode: returnCode, list: list });
+            callback({ returnCode: returnCode, list: pricingList });
         });
     }
     subscribe(transaction, callback) {

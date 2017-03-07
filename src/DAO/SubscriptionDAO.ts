@@ -15,7 +15,7 @@ export class SubscriptionDAO extends DAOIF {
 
     getSubscriptionItemListByCat(category: number, callback) {
         super.getConnection(function (connection) {
-            var queryString = "select * from SubscriptionItem s LEFT JOIN Company c On s.company_id = c.company_id ";
+            var queryString = "select *, s.name as \"subscription_item_name\"  from SubscriptionItem s LEFT JOIN Company c On s.company_id = c.company_id ";
             var items = [];
             connection.query(queryString, function (err, rows, fields) {
                 if (err)
@@ -23,12 +23,13 @@ export class SubscriptionDAO extends DAOIF {
                 for (var i in rows) {
                     let item = new SubscriptionItem();
                     item.subscription_id = rows[i].subscription_id;
-                    item.name = rows[i].s.name;
+                    item.name = rows[i].subscription_item_name;
                     item.introduction = rows[i].introduction;
                     item.rating = rows[i].rating;
                     item.smallImage = rows[i].small_image;
                     item.companyId = rows[i].company_id;
                     item.companyName = rows[i].name
+                    item.itemDescription = rows[i].description
                     items.push(item)
                 }
                 connection.end();

@@ -45,16 +45,21 @@ export class SubscriptionController {
         if (sessionValid != ReturnCode.SUCCEEDED) {
             callback(null, {returnCode: sessionValid})
         } else {
-            let returnCode = ReturnCode.FAILED;
-            let discountList = await this.subDAO.getDiscountDetailsBySubId(subscription_id);
-            let productList = await this.subDAO.getSubscriptionItemDetails(subscription_id);
+            let returnCode = ReturnCode.SUCCEEDED;
+            let discountList = <[]> (await this.subDAO.getDiscountDetailsBySubId(subscription_id));
+            let pricingList = <[]> (await this.pricingDAO.findPricingBySubscriptionId(subscription_id))
+            let productList = <[]> (await this.subDAO.getSubscriptionItemDetails(subscription_id));
             if (discountList == null || productList == null) {
                 returnCode = ReturnCode.EXCEPTION
                 callback(null, {returnCode: returnCode})
             } else {
+                if (pricingList.length == 0) {
+                    returnCode = ReturnCode.SUBSCRIPTION_ID_INVALID
+                }
                 callback(null, {
                     returnCode: returnCode,
                     id: subscription_id,
+                    pricingList: pricingList,
                     discountList: discountList,
                     productList: productList
                 })
@@ -63,15 +68,13 @@ export class SubscriptionController {
     }
 
 
-    getPricingDetails(id: number, callback) {
-        this.pricingDAO.findPricingBySubscriptionId(id, function (err, list) {
-            let returnCode = ReturnCode.SUCCEEDED
-            if (err != null) {
-                returnCode = ReturnCode.EXCEPTION;
-            }
-            callback({returnCode: returnCode, list: list})
-
-        })
+    async getPricingDetails(id: number, callback) {
+        let pricingList = <[]> (await this.pricingDAO.findPricingBySubscriptionId(id));
+        let returnCode = ReturnCode.SUCCEEDED
+        if (pricingList == null) {
+            returnCode = ReturnCode.EXCEPTION;
+        }
+        callback({returnCode: returnCode, list: pricingList})
     }
 
 

@@ -8,10 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const User_1 = require('../model/User');
+const DAOIF_1 = require("./DAOIF");
 var mysql = require('mysql');
 /* ES6: */
-class UserDAO {
+class UserDAO extends DAOIF_1.DAOIF {
     constructor() {
+        super();
     }
     findUserByUsername(mobilePhone) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -52,23 +54,6 @@ class UserDAO {
                 connection.end();
                 callback(null, result);
             });
-        });
-    }
-    getConnection(callback) {
-        var connection = mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: '123',
-            database: 'Puzzle',
-        });
-        connection.connect(function (err) {
-            if (err) {
-                console.error('error connecting: ' + err.stack);
-                return;
-            }
-            console.log('connected as id ' + connection.threadId);
-            callback(connection);
-            //return connection;
         });
     }
 }

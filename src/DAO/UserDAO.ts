@@ -1,13 +1,13 @@
 import {User} from '../model/User';
-
+import {DAOIF} from "./DAOIF";
 var mysql = require('mysql');
 
 
 /* ES6: */
-export class UserDAO {
+export class UserDAO extends DAOIF{
 
     constructor() {
-
+        super();
     }
 
     async findUserByUsername(mobilePhone: string) {
@@ -49,25 +49,5 @@ export class UserDAO {
                 callback(null, result)
             })
         })
-    }
-
-    getConnection(callback) {
-        var connection = mysql.createConnection(
-            {
-                host: 'localhost',
-                user: 'root',
-                password: '123',
-                database: 'Puzzle',
-            }
-        );
-        connection.connect(function (err) {
-            if (err) {
-                console.error('error connecting: ' + err.stack);
-                return;
-            }
-            console.log('connected as id ' + connection.threadId);
-            callback(connection);
-            //return connection;
-        });
     }
 }
