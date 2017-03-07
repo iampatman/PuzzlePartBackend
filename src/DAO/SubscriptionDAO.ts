@@ -1,22 +1,19 @@
-
-import { SubscriptionItem } from '../model/SubscriptionItem';
+import {SubscriptionItem} from '../model/SubscriptionItem';
 import {DAOIF} from "./DAOIF";
+import {Discount} from "../model/Discount";
+import {SubscriptionDetail} from "../model/SubscriptionDetail";
 
 var mysql = require('mysql');
 
 
-
-
-
-
 /* ES6: */
-export class SubscriptionDAO extends DAOIF{
+export class SubscriptionDAO extends DAOIF {
 
-    constructor(){
+    constructor() {
         super()
     }
 
-    getSubscriptionItemListByCat(category: number, callback){
+    getSubscriptionItemListByCat(category: number, callback) {
         super.getConnection(function (connection) {
             var queryString = "select * from SubscriptionItem s LEFT JOIN Company c On s.company_id = c.company_id ";
             var items = [];
@@ -26,7 +23,7 @@ export class SubscriptionDAO extends DAOIF{
                 for (var i in rows) {
                     let item = new SubscriptionItem();
                     item.subscription_id = rows[i].subscription_id;
-                    item.name = rows[i].name;
+                    item.name = rows[i].s.name;
                     item.introduction = rows[i].introduction;
                     item.rating = rows[i].rating;
                     item.smallImage = rows[i].small_image;
@@ -42,28 +39,60 @@ export class SubscriptionDAO extends DAOIF{
     }
 
 
-    getSubscriptionItemDetails(id: number, callback){
-        super.getConnection(function (connection) {
-            var queryString = "Select * from SubscriptionItem where subscription_item_id = " + id;
-
-            connection.query(queryString, function (err, rows, fields) {
-                if (err)
-                    callback(false)
-                else {
-                    if (rows.length >= 1) {
-                        let item = new SubscriptionItem();
-                        item.subscription_id = rows[0].subscription_id;
-                        item.name = rows[0].name;
-                        item.introduction = rows[0].introduction;
-                        item.rating = rows[0].rating;
-                        item.smallImage = rows[0].small_image;
+    getSubscriptionItemDetails(id: number) {
+        return new Promise((resolve, reject) => {
+            super.getConnection(function (connection) {
+                var queryString = "select * from SubscriptionDetail s LEFT JOIN Product p " +
+                    "ON s.product_id = p.product_id " +
+                    "where subscription_id = " + id;
+                connection.query(queryString, function (err, rows, fields) {
+                    var items = []
+                    if (err)
+                        reject(err)
+                    else {
+                        for (var i in rows) {
+                            let item = new SubscriptionDetail();
+                            item.subscription_id = rows[i].subscription_id;
+                            item.product_id = rows[i].product_id;
+                            item.product_name = rows[i].product_name;
+                            item.introduction = rows[i].introduction
+                            items.push(item)
+                        }
+                        resolve(items)
                     }
-                }
+                    connection.end();
+                });
 
-                connection.end();
-            });
+            })
+        });
+    }
 
+    async getDiscountDetailsBySubId(id: number) {
+        return new Promise((resolve, reject) => {
+            super.getConnection(function (connection) {
+                var queryString = "Select * from Discount_Subscription where subscription_id = " + id;
+                connection.query(queryString, function (err, rows, fields) {
+                    var items = []
+                    if (err) {
+                        console.error(err)
+                        reject(err);
+                    } else {
+                        for (var i in rows) {
+                            let item = new Discount();
+                            item.subscription_id = rows[i].subscription_id;
+                            item.discount_id = rows[i].discount_id;
+                            item.discount = rows[i].discount;
+                            item.duration = rows[i].duration;
+                            items.push(item)
+                        }
+                        resolve(items)
+                    }
+                    connection.end();
+                });
+
+            })
         })
+
     }
 
 }

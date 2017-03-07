@@ -31,10 +31,11 @@ export class UserController {
         if (user != null) {
             if (user.password == password) {
                 returnCode = ReturnCode.SUCCEEDED;
+                user.password = ""
                 sessionID = <string> (await SessionManager.getInstance().getSessionID(user.mobilePhone));
             }
         }
-        callback(null, {returnCode: returnCode, sessionID: sessionID})
+        callback(null, {returnCode: returnCode, sessionID: sessionID, details: user})
     }
 
 }

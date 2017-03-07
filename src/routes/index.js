@@ -76,6 +76,32 @@ index.post('/subscription/getlist', function (req, res, next) {
                 if (error == null) {
                     res.send(JSON.stringify(result));
                 }
+                else {
+                    res.send(JSON.stringify({ returnCode: ReturnCode_1.ReturnCode.EXCEPTION }));
+                }
+            });
+        }
+    });
+});
+index.post('/subscription/getdetailbyid', function (req, res, next) {
+    let data = JSON.parse(JSON.stringify(req.body));
+    let username = data.username;
+    let sessionID = data.sessionID;
+    let subscription_id = data.subscription_id;
+    let sig = data.sig;
+    res.setHeader("content-type", "application/json");
+    UtilsTS_1.UtilsTS.validateChecksum([username, sessionID, subscription_id], sig).then((validRequest) => {
+        if (validRequest == false) {
+            res.send(JSON.stringify({ returnCode: ReturnCode_1.ReturnCode.CHECKSUM_INCORRECT }));
+        }
+        else {
+            subController.getSubscriptionItemDetails(data, function (error, result) {
+                if (error == null) {
+                    res.send(JSON.stringify(result));
+                }
+                else {
+                    res.send(JSON.stringify({ returnCode: ReturnCode_1.ReturnCode.EXCEPTION }));
+                }
             });
         }
     });
@@ -88,13 +114,13 @@ index.post('/subscription/subscribe', function (req, res, next) {
     transaction.subscription_id = parseInt(data.subscription_id);
     let sessionID = data.sessionID;
     let sig = data.sig;
+    res.setHeader("content-type", "application/json");
     UtilsTS_1.UtilsTS.validateChecksum([transaction.user_id, transaction.pricing_id, transaction.subscription_id, sessionID], sig).then((validRequest) => {
         if (validRequest == false) {
             res.send(JSON.stringify({ returnCode: ReturnCode_1.ReturnCode.CHECKSUM_INCORRECT }));
         }
         else {
             subController.subscribe(transaction, function (result, data) {
-                res.setHeader("content-type", "application/json");
                 res.send(JSON.stringify({ returnCode: result, transaction: data }));
             });
         }

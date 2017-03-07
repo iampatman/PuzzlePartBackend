@@ -1,3 +1,5 @@
+import {SubscriptionDetail} from "./SubscriptionDetail";
+import {Discount} from "./Discount";
 /**
  * Created by NguyenTrung on 24/2/17.
  */
@@ -9,6 +11,9 @@ export class SubscriptionItem{
     rating: number;
     companyName: string;
     companyId: string;
+    details: [SubscriptionDetail];
+    discounts: [Discount];
+
     constructor(){
     }
 }

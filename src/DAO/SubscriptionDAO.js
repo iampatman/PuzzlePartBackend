@@ -1,6 +1,16 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator.throw(value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments)).next());
+    });
+};
 const SubscriptionItem_1 = require('../model/SubscriptionItem');
 const DAOIF_1 = require("./DAOIF");
+const Discount_1 = require("../model/Discount");
+const SubscriptionDetail_1 = require("../model/SubscriptionDetail");
 var mysql = require('mysql');
 /* ES6: */
 class SubscriptionDAO extends DAOIF_1.DAOIF {
@@ -17,7 +27,7 @@ class SubscriptionDAO extends DAOIF_1.DAOIF {
                 for (var i in rows) {
                     let item = new SubscriptionItem_1.SubscriptionItem();
                     item.subscription_id = rows[i].subscription_id;
-                    item.name = rows[i].name;
+                    item.name = rows[i].s.name;
                     item.introduction = rows[i].introduction;
                     item.rating = rows[i].rating;
                     item.smallImage = rows[i].small_image;
@@ -30,23 +40,58 @@ class SubscriptionDAO extends DAOIF_1.DAOIF {
             });
         });
     }
-    getSubscriptionItemDetails(id, callback) {
-        super.getConnection(function (connection) {
-            var queryString = "Select * from SubscriptionItem where subscription_item_id = " + id;
-            connection.query(queryString, function (err, rows, fields) {
-                if (err)
-                    callback(false);
-                else {
-                    if (rows.length >= 1) {
-                        let item = new SubscriptionItem_1.SubscriptionItem();
-                        item.subscription_id = rows[0].subscription_id;
-                        item.name = rows[0].name;
-                        item.introduction = rows[0].introduction;
-                        item.rating = rows[0].rating;
-                        item.smallImage = rows[0].small_image;
+    getSubscriptionItemDetails(id) {
+        return new Promise((resolve, reject) => {
+            super.getConnection(function (connection) {
+                var queryString = "select * from SubscriptionDetail s LEFT JOIN Product p " +
+                    "ON s.product_id = p.product_id " +
+                    "where subscription_id = " + id;
+                connection.query(queryString, function (err, rows, fields) {
+                    var items = [];
+                    if (err)
+                        reject(err);
+                    else {
+                        for (var i in rows) {
+                            let item = new SubscriptionDetail_1.SubscriptionDetail();
+                            item.subscription_id = rows[i].subscription_id;
+                            item.product_id = rows[i].product_id;
+                            item.product_name = rows[i].product_name;
+                            item.introduction = rows[i].introduction;
+                            items.push(item);
+                        }
+                        resolve(items);
                     }
-                }
-                connection.end();
+                    connection.end();
+                });
+            });
+        });
+    }
+    getDiscountDetailsBySubId(id) {
+        const _super = name => super[name];
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                _super("getConnection").call(this, function (connection) {
+                    var queryString = "Select * from Discount_Subscription where subscription_id = " + id;
+                    connection.query(queryString, function (err, rows, fields) {
+                        var items = [];
+                        if (err) {
+                            console.error(err);
+                            reject(err);
+                        }
+                        else {
+                            for (var i in rows) {
+                                let item = new Discount_1.Discount();
+                                item.subscription_id = rows[i].subscription_id;
+                                item.discount_id = rows[i].discount_id;
+                                item.discount = rows[i].discount;
+                                item.duration = rows[i].duration;
+                                items.push(item);
+                            }
+                            resolve(items);
+                        }
+                        connection.end();
+                    });
+                });
             });
         });
     }

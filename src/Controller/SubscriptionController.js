@@ -37,12 +37,34 @@ class SubscriptionController {
             }
         });
     }
-    // getSubscriptionItemDetails(id: number, callback){
-    //     this.subDAO.getSubscriptionItemListByCat(-1, function (list) {
-    //         callback(list)
-    //
-    //     })
-    // }
+    getSubscriptionItemDetails(data, callback) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let sessionID = data.sessionID;
+            let subscription_id = data.subscription_id;
+            let mobilePhone = data.mobilePhone;
+            let sessionValid = (yield SessionManager_1.SessionManager.getInstance().checkSessionID(sessionID, mobilePhone));
+            if (sessionValid != ReturnCode_1.ReturnCode.SUCCEEDED) {
+                callback(null, { returnCode: sessionValid });
+            }
+            else {
+                let returnCode = ReturnCode_1.ReturnCode.FAILED;
+                let discountList = yield this.subDAO.getDiscountDetailsBySubId(subscription_id);
+                let productList = yield this.subDAO.getSubscriptionItemDetails(subscription_id);
+                if (discountList == null || productList == null) {
+                    returnCode = ReturnCode_1.ReturnCode.EXCEPTION;
+                    callback(null, { returnCode: returnCode });
+                }
+                else {
+                    callback(null, {
+                        returnCode: returnCode,
+                        id: subscription_id,
+                        discountList: discountList,
+                        productList: productList
+                    });
+                }
+            }
+        });
+    }
     getPricingDetails(id, callback) {
         this.pricingDAO.findPricingBySubscriptionId(id, function (err, list) {
             let returnCode = ReturnCode_1.ReturnCode.SUCCEEDED;

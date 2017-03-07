@@ -35,10 +35,11 @@ class UserController {
             if (user != null) {
                 if (user.password == password) {
                     returnCode = ReturnCode_1.ReturnCode.SUCCEEDED;
+                    user.password = "";
                     sessionID = (yield SessionManager_1.SessionManager.getInstance().getSessionID(user.mobilePhone));
                 }
             }
-            callback(null, { returnCode: returnCode, sessionID: sessionID });
+            callback(null, { returnCode: returnCode, sessionID: sessionID, details: user });
         });
     }
 }

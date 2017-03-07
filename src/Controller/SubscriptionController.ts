@@ -37,12 +37,32 @@ export class SubscriptionController {
         }
     }
 
-    // getSubscriptionItemDetails(id: number, callback){
-    //     this.subDAO.getSubscriptionItemListByCat(-1, function (list) {
-    //         callback(list)
-    //
-    //     })
-    // }
+    async getSubscriptionItemDetails(data, callback) {
+        let sessionID = data.sessionID;
+        let subscription_id = data.subscription_id
+        let mobilePhone = data.mobilePhone
+        let sessionValid = <number> (await SessionManager.getInstance().checkSessionID(sessionID, mobilePhone))
+        if (sessionValid != ReturnCode.SUCCEEDED) {
+            callback(null, {returnCode: sessionValid})
+        } else {
+            let returnCode = ReturnCode.FAILED;
+            let discountList = await this.subDAO.getDiscountDetailsBySubId(subscription_id);
+            let productList = await this.subDAO.getSubscriptionItemDetails(subscription_id);
+            if (discountList == null || productList == null) {
+                returnCode = ReturnCode.EXCEPTION
+                callback(null, {returnCode: returnCode})
+            } else {
+                callback(null, {
+                    returnCode: returnCode,
+                    id: subscription_id,
+                    discountList: discountList,
+                    productList: productList
+                })
+            }
+        }
+    }
+
+
     getPricingDetails(id: number, callback) {
         this.pricingDAO.findPricingBySubscriptionId(id, function (err, list) {
             let returnCode = ReturnCode.SUCCEEDED
