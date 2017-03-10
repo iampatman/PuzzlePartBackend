@@ -17,7 +17,7 @@ export class PricingDAO extends DAOIF {
 
     async findPricingBySubscriptionId(id: number) {
         return new Promise((resolve, reject) => {
-            super.getConnection(function (connection) {
+            super.getConnection(function (err, connection) {
                     var queryString = "Select * from Pricing WHERE subscription_id = " + id;
                     var pricinglist = []
                     connection.query(queryString, function (err, rows, fields) {
@@ -45,7 +45,7 @@ export class PricingDAO extends DAOIF {
 
     async findPricingByPricingId(id: number) {
         return new Promise((resolve, reject) => {
-            super.getConnection(function (connection) {
+            super.getConnection(function (err, connection) {
                     var queryString = "Select * from Pricing WHERE pricing_id = " + id;
                     connection.query(queryString, function (err, rows, fields) {
                         if (err)

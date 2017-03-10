@@ -18,7 +18,7 @@ class SubscriptionDAO extends DAOIF_1.DAOIF {
         super();
     }
     getSubscriptionItemListByCat(category, callback) {
-        super.getConnection(function (connection) {
+        super.getConnection(function (err, connection) {
             var queryString = "select *, s.name as \"subscription_item_name\"  from SubscriptionItem s LEFT JOIN Company c On s.company_id = c.company_id ";
             var items = [];
             connection.query(queryString, function (err, rows, fields) {
@@ -43,7 +43,7 @@ class SubscriptionDAO extends DAOIF_1.DAOIF {
     }
     getSubscriptionItemDetails(id) {
         return new Promise((resolve, reject) => {
-            super.getConnection(function (connection) {
+            super.getConnection(function (err, connection) {
                 var queryString = "select * from SubscriptionDetail s LEFT JOIN Product p " +
                     "ON s.product_id = p.product_id " +
                     "where subscription_id = " + id;
@@ -71,7 +71,7 @@ class SubscriptionDAO extends DAOIF_1.DAOIF {
         const _super = name => super[name];
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
-                _super("getConnection").call(this, function (connection) {
+                _super("getConnection").call(this, function (err, connection) {
                     var queryString = "Select * from Discount_Subscription where subscription_id = " + id;
                     connection.query(queryString, function (err, rows, fields) {
                         var items = [];

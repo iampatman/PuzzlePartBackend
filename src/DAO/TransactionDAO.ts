@@ -14,7 +14,7 @@ export class TransactionDAO extends DAOIF {
     }
 
     saveTransaction(transaction, callback) {
-        this.getConnection(function (connection) {
+        this.getConnection(function (err, connection) {
             var sql = "INSERT INTO Transaction SET ?";
             var values = {
                 transaction_id: transaction.transaction_id,
@@ -40,7 +40,7 @@ export class TransactionDAO extends DAOIF {
     }
 
     getTransactionsByUserId(userId, callback) {
-        this.getConnection(function (connection) {
+        this.getConnection(function (err, connection) {
             var sql = "SELECT * FROM Transaction Where user_id = " + userId;
             var items = []
             connection.query(sql, function (err, rows, fields) {

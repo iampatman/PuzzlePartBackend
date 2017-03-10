@@ -14,7 +14,7 @@ export class SubscriptionDAO extends DAOIF {
     }
 
     getSubscriptionItemListByCat(category: number, callback) {
-        super.getConnection(function (connection) {
+        super.getConnection(function (err, connection) {
             var queryString = "select *, s.name as \"subscription_item_name\"  from SubscriptionItem s LEFT JOIN Company c On s.company_id = c.company_id ";
             var items = [];
             connection.query(queryString, function (err, rows, fields) {
@@ -42,7 +42,7 @@ export class SubscriptionDAO extends DAOIF {
 
     getSubscriptionItemDetails(id: number) {
         return new Promise((resolve, reject) => {
-            super.getConnection(function (connection) {
+            super.getConnection(function (err, connection) {
                 var queryString = "select * from SubscriptionDetail s LEFT JOIN Product p " +
                     "ON s.product_id = p.product_id " +
                     "where subscription_id = " + id;
@@ -70,7 +70,7 @@ export class SubscriptionDAO extends DAOIF {
 
     async getDiscountDetailsBySubId(id: number) {
         return new Promise((resolve, reject) => {
-            super.getConnection(function (connection) {
+            super.getConnection(function (err, connection) {
                 var queryString = "Select * from Discount_Subscription where subscription_id = " + id;
                 connection.query(queryString, function (err, rows, fields) {
                     var items = []

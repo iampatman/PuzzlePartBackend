@@ -4,9 +4,10 @@
 var mysql = require('mysql');
 
 export class DAOIF {
-    constructor(){
+    constructor() {
 
     }
+
     getConnection(callback) {
         var connection = mysql.createConnection(
             {
@@ -19,10 +20,12 @@ export class DAOIF {
         connection.connect(function (err) {
             if (err) {
                 console.error('Error connecting: ' + err.stack);
-                return;
+                callback(err)
+            } else {
+                console.log('Connected as id ' + connection.threadId);
+                callback(null, connection);
             }
-            console.log('Connected as id ' + connection.threadId);
-            callback(connection);
+
         });
     }
 }
