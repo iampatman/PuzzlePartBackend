@@ -5,6 +5,7 @@ import {Transaction} from "../model/Transaction";
 import {ReturnCode} from "../Common/ReturnCode";
 import {UtilsTS} from "../Common/UtilsTS";
 import {SessionManager} from "../Common/SessionManager";
+import {Discount} from "../model/Discount";
 
 
 /**
@@ -82,9 +83,15 @@ export class SubscriptionController {
         var transaction_id = this.generate_transaction_id();
         var validate_transaction_detail = true;
         var returnCode = ReturnCode.FAILED;
+        var discountId = transaction.discount_id;
         transaction.transaction_id = transaction_id;
         let transactionDAO = this.transactionDAO;
-        //checksum
+
+        let discountItem = <Discount> (await this.subDAO.getDiscountDetailsByDiscountId(discountId))
+        if (discountItem == null) {
+            callback(null, {returnCode: ReturnCode.DATA_INVALID});
+            return;
+        }
         let pricingStr = <string> (await this.pricingDAO.findPricingByPricingId(transaction.pricing_id));
         if (pricingStr == "") {
             callback(ReturnCode.DATA_INVALID);
@@ -96,7 +103,8 @@ export class SubscriptionController {
             return;
         } else {
             let endDate = new Date();
-            endDate.setDate(endDate.getDate() + 31);
+            let startDate = UtilsTS.dateFromString(transaction.start_date);
+            endDate.setDate(startDate.getDate() + discountItem.duration * 30);
             transaction.start_date = UtilsTS.dateToMySQLTimestamp(new Date());
             transaction.end_date = UtilsTS.dateToMySQLTimestamp(endDate);
             transaction.remaining_times = pricingItem.quantity;

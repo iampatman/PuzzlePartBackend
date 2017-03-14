@@ -88,6 +88,10 @@ class SubscriptionController {
             transaction.transaction_id = transaction_id;
             let transactionDAO = this.transactionDAO;
             //checksum
+            // this.pricingDAO.findPricingByPricingId(transaction.pricing_id)
+            //     .then(function () {
+            //
+            //     })
             let pricingStr = (yield this.pricingDAO.findPricingByPricingId(transaction.pricing_id));
             if (pricingStr == "") {
                 callback(ReturnCode_1.ReturnCode.DATA_INVALID);

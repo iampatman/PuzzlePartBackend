@@ -106,7 +106,7 @@ index.post('/subscription/getdetailbyid', function (req, res, next) {
         }
     });
 });
-index.post('/subscription/subscribe', function (req, res, next) {
+index.post('/subscription/purchase', function (req, res, next) {
     let data = JSON.parse(JSON.stringify(req.body));
     let transaction = new Transaction_1.Transaction();
     transaction.user_id = parseInt(data.user_id);
@@ -137,7 +137,7 @@ index.post('/transaction/get', function (req, res, next) {
             res.send(JSON.stringify({ returnCode: ReturnCode_1.ReturnCode.CHECKSUM_INCORRECT }));
         }
         else {
-            transController.getTransactionsByUserId(user_id, function (err, result) {
+            transController.getTransactionsByUserId(data, function (err, result) {
                 res.send(JSON.stringify(result));
             });
         }

@@ -29,14 +29,22 @@ export class TransactionController {
         this.transactionDAO = new TransactionDAO();
 
     }
-    getTransactionsByUserId(userId, callback) {
-        this.transactionDAO.getTransactionsByUserId(userId, (err, result) => {
-            if (err != null) {
-                callback(err, {returnCode: ReturnCode.EXCEPTION})
-            } else {
-                callback(err, {returnCode: ReturnCode.SUCCEEDED, list: result})
-            }
-        })
 
+    async getTransactionsByUserId(data, callback) {
+        let userId = data.userId
+        let sessionID = data.sessionID
+        let mobilePhone = data.mobilePhone
+
+        let sessionValid = <number> (await SessionManager.getInstance().checkSessionID(sessionID, mobilePhone))
+        if (sessionValid != ReturnCode.SUCCEEDED) {
+            callback(null, {returnCode: sessionValid})
+        } else {
+            this.transactionDAO.getTransactionsByUserId(userId)
+                .then((items) => {
+                    callback(null, {returnCode: ReturnCode.SUCCEEDED, list: items})
+                }).catch((err) => {
+                callback(err, {returnCode: ReturnCode.EXCEPTION})
+            });
+        }
     }
 }

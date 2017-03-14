@@ -39,31 +39,34 @@ export class TransactionDAO extends DAOIF {
         })
     }
 
-    getTransactionsByUserId(userId, callback) {
-        this.getConnection(function (err, connection) {
-            var sql = "SELECT * FROM Transaction Where user_id = " + userId;
-            var items = []
-            connection.query(sql, function (err, rows, fields) {
-                if (err) {
-                    console.log(err.toString());
-                    callback(err)
-                } else {
-                    for (var i in rows) {
-                        var transaction = new Transaction()
-                        transaction.transaction_id = rows[i].transaction_id;
-                        transaction.subscription_id = rows[i].subscription_id
-                        transaction.user_id = rows[i].user_id
-                        transaction.pricing_id = rows[i].pricing_id
-                        transaction.start_date = rows[i].start_date
-                        transaction.end_date = rows[i].end_date
-                        transaction.remaining_times = rows[i].remaining_times
-                        items.push(transaction)
+    async getTransactionsByUserId(userId) {
+        return new Promise((resolve, reject) => {
+            this.getConnection(function (err, connection) {
+                var sql = "select * from Transaction t LEFT JOIN SubscriptionItem s ON t.subscription_id = s.subscription_id where t.user_id = " + userId;
+                var items = []
+                connection.query(sql, function (err, rows, fields) {
+                    if (err) {
+                        console.log(err.toString());
+                        reject(err)
+                    } else {
+                        for (var i in rows) {
+                            var transaction = new Transaction()
+                            transaction.subscription_name = rows[i].name;
+                            transaction.transaction_id = rows[i].transaction_id;
+                            transaction.subscription_id = rows[i].subscription_id
+                            transaction.user_id = rows[i].user_id
+                            transaction.pricing_id = rows[i].pricing_id
+                            transaction.start_date = rows[i].start_date
+                            transaction.end_date = rows[i].end_date
+                            transaction.remaining_times = rows[i].remaining_times
+                            items.push(transaction)
+                        }
+                        connection.end();
+                        resolve(items);
                     }
-                    connection.end();
-                    callback(null, items)
-                }
+                })
             })
-        })
+        });
     }
 
 }

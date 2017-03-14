@@ -93,7 +93,32 @@ export class SubscriptionDAO extends DAOIF {
 
             })
         })
+    }
 
+
+    async getDiscountDetailsByDiscountId(id: number) {
+        return new Promise((resolve, reject) => {
+            super.getConnection(function (err, connection) {
+                var queryString = "Select * from Discount_Subscription where discount_id = " + id;
+                connection.query(queryString, function (err, rows, fields) {
+                    if (err) {
+                        console.error(err)
+                        reject(err);
+                    } else {
+                        if (rows.length > 0) {
+                            let item = new Discount();
+                            item.subscription_id = rows[0].subscription_id;
+                            item.discount_id = rows[0].discount_id;
+                            item.discount = rows[0].discount;
+                            item.duration = rows[0].duration;
+                            resolve(item)
+                        }
+                    }
+                    connection.end();
+                });
+
+            })
+        })
     }
 
 }

@@ -1,3 +1,4 @@
+import DateTimeFormat = Intl.DateTimeFormat;
 /**
  * Created by NguyenTrung on 26/2/17.
  */
@@ -9,6 +10,11 @@ export class UtilsTS {
 
     static dateToMySQLTimestamp(date) {
         return date.toISOString().slice(0, 19).replace('T', ' ');
+    }
+
+
+    static dateFromString(str: String): Date {
+        return new Date();
     }
 
     static sha256(params, callback) {
@@ -65,7 +71,6 @@ export class UtilsTS {
 
     }
 }
-
 
 
 UtilsTS.decrypt("5cdf83c3722120227d18b65ebfc23eb8").then((value) => {

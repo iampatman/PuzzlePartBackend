@@ -27,7 +27,7 @@ export class UserDAO extends DAOIF{
                             if (rows.length > 0) {
                                 if (rows[0].mobile_phone == mobilePhone) {
                                     user.password = rows[0].password
-                                    user.email = rows[0].email123
+                                    user.email = rows[0].email
                                     user.userId = rows[0].user_id
                                     user.name = rows[0].name
                                 }
@@ -41,7 +41,7 @@ export class UserDAO extends DAOIF{
                         resolve(user);
                     });
                 })
-            }, 3000);
+            }, 1);
         })
     }
 
