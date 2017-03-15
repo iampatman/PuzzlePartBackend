@@ -6,6 +6,7 @@ import {ReturnCode} from "../Common/ReturnCode";
 import {UtilsTS} from "../Common/UtilsTS";
 import {SessionManager} from "../Common/SessionManager";
 import {Discount} from "../model/Discount";
+import {DiscountDAO} from "../DAO/DiscountDAO";
 
 
 /**
@@ -17,12 +18,12 @@ export class SubscriptionController {
     subDAO: SubscriptionDAO;
     pricingDAO: PricingDAO;
     transactionDAO: TransactionDAO;
-
+    discountDAO: DiscountDAO;
     constructor() {
         this.subDAO = new SubscriptionDAO();
         this.pricingDAO = new PricingDAO();
         this.transactionDAO = new TransactionDAO();
-
+        this.discountDAO = new DiscountDAO();
     }
 
     async getSubscriptionItemList(data, callback) {
@@ -87,7 +88,7 @@ export class SubscriptionController {
         transaction.transaction_id = transaction_id;
         let transactionDAO = this.transactionDAO;
 
-        let discountItem = <Discount> (await this.subDAO.getDiscountDetailsByDiscountId(discountId))
+        let discountItem = <Discount> (await this.discountDAO.getDiscountDetailsByDiscountId(discountId))
         if (discountItem == null) {
             callback(null, {returnCode: ReturnCode.DATA_INVALID});
             return;

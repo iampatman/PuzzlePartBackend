@@ -13,6 +13,7 @@ const TransactionDAO_1 = require("../DAO/TransactionDAO");
 const ReturnCode_1 = require("../Common/ReturnCode");
 const UtilsTS_1 = require("../Common/UtilsTS");
 const SessionManager_1 = require("../Common/SessionManager");
+const DiscountDAO_1 = require("../DAO/DiscountDAO");
 /**
  * Created by NguyenTrung on 24/2/17.
  */
@@ -21,6 +22,7 @@ class SubscriptionController {
         this.subDAO = new SubscriptionDAO_1.SubscriptionDAO();
         this.pricingDAO = new PricingDAO_1.PricingDAO();
         this.transactionDAO = new TransactionDAO_1.TransactionDAO();
+        this.discountDAO = new DiscountDAO_1.DiscountDAO();
     }
     getSubscriptionItemList(data, callback) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -85,13 +87,14 @@ class SubscriptionController {
             var transaction_id = this.generate_transaction_id();
             var validate_transaction_detail = true;
             var returnCode = ReturnCode_1.ReturnCode.FAILED;
+            var discountId = transaction.discount_id;
             transaction.transaction_id = transaction_id;
             let transactionDAO = this.transactionDAO;
-            //checksum
-            // this.pricingDAO.findPricingByPricingId(transaction.pricing_id)
-            //     .then(function () {
-            //
-            //     })
+            let discountItem = (yield this.discountDAO.getDiscountDetailsByDiscountId(discountId));
+            if (discountItem == null) {
+                callback(null, { returnCode: ReturnCode_1.ReturnCode.DATA_INVALID });
+                return;
+            }
             let pricingStr = (yield this.pricingDAO.findPricingByPricingId(transaction.pricing_id));
             if (pricingStr == "") {
                 callback(ReturnCode_1.ReturnCode.DATA_INVALID);
@@ -104,7 +107,8 @@ class SubscriptionController {
             }
             else {
                 let endDate = new Date();
-                endDate.setDate(endDate.getDate() + 31);
+                let startDate = UtilsTS_1.UtilsTS.dateFromString(transaction.start_date);
+                endDate.setDate(startDate.getDate() + discountItem.duration * 30);
                 transaction.start_date = UtilsTS_1.UtilsTS.dateToMySQLTimestamp(new Date());
                 transaction.end_date = UtilsTS_1.UtilsTS.dateToMySQLTimestamp(endDate);
                 transaction.remaining_times = pricingItem.quantity;

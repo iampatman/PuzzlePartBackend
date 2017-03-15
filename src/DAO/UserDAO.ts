@@ -4,7 +4,7 @@ var mysql = require('mysql');
 
 
 /* ES6: */
-export class UserDAO extends DAOIF{
+export class UserDAO extends DAOIF {
 
     constructor() {
         super();
@@ -14,7 +14,7 @@ export class UserDAO extends DAOIF{
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 this.getConnection(function (err, connection) {
-                    if (err){
+                    if (err) {
                         reject(err);
                         return;
                     }
@@ -32,7 +32,7 @@ export class UserDAO extends DAOIF{
                                     user.name = rows[0].name
                                 }
                             }
-                        } catch (err){
+                        } catch (err) {
                             console.error(err)
                             reject(user)
                         }
@@ -46,7 +46,7 @@ export class UserDAO extends DAOIF{
     }
 
     saveUser(user: User, callback) {
-        this.getConnection(function (connection) {
+        this.getConnection(function (err, connection) {
             var sql = "INSERT INTO User SET ?";
             var values = {mobile_phone: user.mobilePhone, password: user.password, name: user.name};
             connection.query(sql, values, function (err, rows) {

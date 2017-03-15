@@ -116,6 +116,7 @@ index.post('/subscription/purchase', function (req, res, next) {
     transaction.user_id = parseInt(data.user_id);
     transaction.pricing_id = parseInt(data.pricing_id);
     transaction.subscription_id = parseInt(data.subscription_id);
+    transaction.discount_id = parseInt(data.discount_id);
     let sessionID = data.sessionID
     let sig = data.sig
     res.setHeader("content-type", "application/json");
