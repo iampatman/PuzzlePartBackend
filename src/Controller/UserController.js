@@ -28,18 +28,40 @@ class UserController {
     }
     login(mobilePhone, password, callback) {
         return __awaiter(this, void 0, void 0, function* () {
-            let userDAO = new UserDAO_1.UserDAO();
-            let user = (yield userDAO.findUserByUsername(mobilePhone));
-            let returnCode = ReturnCode_1.ReturnCode.USERNAME_OR_PASS_INCORRECT;
-            let sessionID = "";
-            if (user != null) {
-                if (user.password == password) {
-                    returnCode = ReturnCode_1.ReturnCode.SUCCEEDED;
-                    user.password = "";
-                    sessionID = (yield SessionManager_1.SessionManager.getInstance().getSessionID(user.mobilePhone));
+            try {
+                let userDAO = new UserDAO_1.UserDAO();
+                let user = (yield userDAO.findUserByUsername(mobilePhone));
+                let returnCode = ReturnCode_1.ReturnCode.USERNAME_OR_PASS_INCORRECT;
+                let sessionID = "";
+                if (user != null) {
+                    if (user.password == password) {
+                        returnCode = ReturnCode_1.ReturnCode.SUCCEEDED;
+                        user.password = "";
+                        sessionID = (yield SessionManager_1.SessionManager.getInstance().getSessionID(user.mobilePhone));
+                    }
                 }
+                callback(null, { returnCode: returnCode, sessionID: sessionID, details: user });
             }
-            callback(null, { returnCode: returnCode, sessionID: sessionID, details: user });
+            catch (err) {
+                callback(err, { returnCode: ReturnCode_1.ReturnCode.EXCEPTION });
+            }
+            // userDAO.findUserByUsername(mobilePhone).then((userObj) => {
+            //     return new Promise((resolve, reject) => {
+            //         let user = <User> userObj
+            //         if (user != null) {
+            //             if (user.password == password) {
+            //                 returnCode = ReturnCode.SUCCEEDED;
+            //                 user.password = ""
+            //                 SessionManager.getInstance().getSessionID(user.mobilePhone)
+            //             )
+            //         ;
+            //     }
+            //     }
+            //     })
+            //
+            // }).catch(err => {
+            //
+            // })
         });
     }
 }

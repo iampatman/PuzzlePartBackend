@@ -47,6 +47,10 @@ export class UserDAO extends DAOIF {
 
     saveUser(user: User, callback) {
         this.getConnection(function (err, connection) {
+            if (err) {
+                console.error(err)
+                callback(err)
+            }
             var sql = "INSERT INTO User SET ?";
             var values = {mobile_phone: user.mobilePhone, password: user.password, name: user.name};
             connection.query(sql, values, function (err, rows) {

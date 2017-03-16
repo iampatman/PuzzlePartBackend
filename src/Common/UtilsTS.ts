@@ -13,6 +13,14 @@ export class UtilsTS {
     }
 
 
+    static callbackToPromise(method, ...args) {
+        return new Promise(function (resolve, reject) {
+            return method(...args, function (err, result) {
+                return err ? reject(err) : resolve(result);
+            });
+        });
+    }
+
     static dateFromString(str: String): Date {
         return new Date();
     }

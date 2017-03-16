@@ -24,18 +24,42 @@ export class UserController {
     }
 
     async login(mobilePhone: string, password: string, callback) {
-        let userDAO = new UserDAO();
-        let user = <User> (await userDAO.findUserByUsername(mobilePhone));
-        let returnCode = ReturnCode.USERNAME_OR_PASS_INCORRECT;
-        let sessionID = ""
-        if (user != null) {
-            if (user.password == password) {
-                returnCode = ReturnCode.SUCCEEDED;
-                user.password = ""
-                sessionID = <string> (await SessionManager.getInstance().getSessionID(user.mobilePhone));
+        try {
+            let userDAO = new UserDAO();
+            let user = <User> (await userDAO.findUserByUsername(mobilePhone));
+            let returnCode = ReturnCode.USERNAME_OR_PASS_INCORRECT;
+            let sessionID = ""
+            if (user != null) {
+                if (user.password == password) {
+                    returnCode = ReturnCode.SUCCEEDED;
+                    user.password = ""
+                    sessionID = <string> (await SessionManager.getInstance().getSessionID(user.mobilePhone));
+                }
             }
+            callback(null, {returnCode: returnCode, sessionID: sessionID, details: user})
+        } catch (err) {
+            callback(err, {returnCode: ReturnCode.EXCEPTION})
         }
-        callback(null, {returnCode: returnCode, sessionID: sessionID, details: user})
+
+
+        // userDAO.findUserByUsername(mobilePhone).then((userObj) => {
+        //     return new Promise((resolve, reject) => {
+        //         let user = <User> userObj
+        //         if (user != null) {
+        //             if (user.password == password) {
+        //                 returnCode = ReturnCode.SUCCEEDED;
+        //                 user.password = ""
+        //                 SessionManager.getInstance().getSessionID(user.mobilePhone)
+        //             )
+        //         ;
+        //     }
+        //     }
+        //     })
+        //
+        // }).catch(err => {
+        //
+        // })
     }
+
 
 }

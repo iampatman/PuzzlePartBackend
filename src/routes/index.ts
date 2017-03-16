@@ -61,6 +61,8 @@ index.post('/user/login', function (req, res, next) {
                 if (err == null) {
                     res.send(JSON.stringify(result))
                 }
+                res.send(JSON.stringify({returnCode: ReturnCode.EXCEPTION}))
+
             });
         }
     })
