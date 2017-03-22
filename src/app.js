@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const path_1 = require('path');
 const index_1 = require('./routes/index');
 const user_1 = require('./routes/user');
+const subscription_1 = require('./routes/subscription');
+const transaction_1 = require('./routes/transaction');
 const cookieParser = require('cookie-parser'); // this module doesn't use the ES6 default export yet
 const app = express();
 // view engine setup
@@ -19,6 +21,8 @@ app.use(cookieParser());
 app.use(express.static(path_1.join(__dirname, 'public')));
 app.use('/', index_1.default);
 app.use('/user', user_1.default);
+app.use('/subscription', subscription_1.default);
+app.use('/transaction', transaction_1.default);
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
     var err = new Error('Not Found');

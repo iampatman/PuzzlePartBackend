@@ -7,6 +7,7 @@ import {UtilsTS} from "../Common/UtilsTS";
 import {SessionManager} from "../Common/SessionManager";
 import {Discount} from "../model/Discount";
 import {DiscountDAO} from "../DAO/DiscountDAO";
+import {Pricing} from "../model/Pricing";
 
 
 /**
@@ -19,6 +20,7 @@ export class SubscriptionController {
     pricingDAO: PricingDAO;
     transactionDAO: TransactionDAO;
     discountDAO: DiscountDAO;
+
     constructor() {
         this.subDAO = new SubscriptionDAO();
         this.pricingDAO = new PricingDAO();
@@ -80,26 +82,25 @@ export class SubscriptionController {
     }
 
 
-    async subscribe(transaction: Transaction, callback) {
+    async subscribe(data, callback) {
+        let transaction = new Transaction();
+        transaction.user_id = parseInt(data.user_id);
+        transaction.pricing_id = parseInt(data.pricing_id);
+        transaction.subscription_id = parseInt(data.subscription_id);
+        transaction.discount_id = parseInt(data.discount_id);
         var transaction_id = this.generate_transaction_id();
         var validate_transaction_detail = true;
         var returnCode = ReturnCode.FAILED;
-        var discountId = transaction.discount_id;
         transaction.transaction_id = transaction_id;
         let transactionDAO = this.transactionDAO;
 
-        let discountItem = <Discount> (await this.discountDAO.getDiscountDetailsByDiscountId(discountId))
+        let discountItem = <Discount> (await this.discountDAO.getDiscountDetailsByDiscountId(transaction.discount_id))
         if (discountItem == null) {
             callback(null, {returnCode: ReturnCode.DATA_INVALID});
             return;
         }
-        let pricingStr = <string> (await this.pricingDAO.findPricingByPricingId(transaction.pricing_id));
-        if (pricingStr == "") {
-            callback(ReturnCode.DATA_INVALID);
-            return;
-        }
-        let pricingItem = JSON.parse(pricingStr);
-        if (pricingItem.subscription_id != transaction.subscription_id) {
+        let pricingItem = <Pricing> (await this.pricingDAO.findPricingByPricingId(transaction.pricing_id));
+        if (pricingItem == null || pricingItem.subscriptionId != transaction.subscription_id) {
             callback(ReturnCode.DATA_INVALID);
             return;
         } else {
@@ -110,7 +111,6 @@ export class SubscriptionController {
             transaction.end_date = UtilsTS.dateToMySQLTimestamp(endDate);
             transaction.remaining_times = pricingItem.quantity;
             transaction.payment_completed = false;
-
             transactionDAO.saveTransaction(transaction, function (result) {
                 if (result == ReturnCode.SUCCEEDED) {
                     console.log("Transaction succeed")

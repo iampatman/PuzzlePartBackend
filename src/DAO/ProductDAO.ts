@@ -7,7 +7,7 @@ var mysql = require('mysql');
 
 
 /* ES6: */
-export class PricingDAO extends DAOIF {
+export class ProductDAO extends DAOIF {
 
     constructor() {
         super();

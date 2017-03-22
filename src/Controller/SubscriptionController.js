@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const SubscriptionDAO_1 = require("../DAO/SubscriptionDAO");
 const PricingDAO_1 = require("../DAO/PricingDAO");
 const TransactionDAO_1 = require("../DAO/TransactionDAO");
+const Transaction_1 = require("../model/Transaction");
 const ReturnCode_1 = require("../Common/ReturnCode");
 const UtilsTS_1 = require("../Common/UtilsTS");
 const SessionManager_1 = require("../Common/SessionManager");
@@ -82,26 +83,25 @@ class SubscriptionController {
             callback({ returnCode: returnCode, list: pricingList });
         });
     }
-    subscribe(transaction, callback) {
+    subscribe(data, callback) {
         return __awaiter(this, void 0, void 0, function* () {
+            let transaction = new Transaction_1.Transaction();
+            transaction.user_id = parseInt(data.user_id);
+            transaction.pricing_id = parseInt(data.pricing_id);
+            transaction.subscription_id = parseInt(data.subscription_id);
+            transaction.discount_id = parseInt(data.discount_id);
             var transaction_id = this.generate_transaction_id();
             var validate_transaction_detail = true;
             var returnCode = ReturnCode_1.ReturnCode.FAILED;
-            var discountId = transaction.discount_id;
             transaction.transaction_id = transaction_id;
             let transactionDAO = this.transactionDAO;
-            let discountItem = (yield this.discountDAO.getDiscountDetailsByDiscountId(discountId));
+            let discountItem = (yield this.discountDAO.getDiscountDetailsByDiscountId(transaction.discount_id));
             if (discountItem == null) {
                 callback(null, { returnCode: ReturnCode_1.ReturnCode.DATA_INVALID });
                 return;
             }
-            let pricingStr = (yield this.pricingDAO.findPricingByPricingId(transaction.pricing_id));
-            if (pricingStr == "") {
-                callback(ReturnCode_1.ReturnCode.DATA_INVALID);
-                return;
-            }
-            let pricingItem = JSON.parse(pricingStr);
-            if (pricingItem.subscription_id != transaction.subscription_id) {
+            let pricingItem = (yield this.pricingDAO.findPricingByPricingId(transaction.pricing_id));
+            if (pricingItem == null || pricingItem.subscriptionId != transaction.subscription_id) {
                 callback(ReturnCode_1.ReturnCode.DATA_INVALID);
                 return;
             }

@@ -17,17 +17,11 @@ export class RedisCaching {
     static getInstance() {
         if (this._instance == null) {
             this._instance = new RedisCaching();
-
         }
-
         return this._instance;
     }
 
     setCache(key, value, timeoutinsec = 10000000) {
-        // if (typeof value == "object") {
-        //
-        //     value = valueObject;
-        // }
         let valueObject = JSON.stringify(value);
         this.client.set(key, valueObject, Redis.print);
         this.client.expire(key, timeoutinsec)

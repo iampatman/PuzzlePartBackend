@@ -4,6 +4,8 @@ import * as bodyParser from 'body-parser';
 import {join} from 'path';
 import index from './routes/index';
 import user from './routes/user';
+import subscription from './routes/subscription';
+import transaction from './routes/transaction';
 import cookieParser = require('cookie-parser'); // this module doesn't use the ES6 default export yet
 
 
@@ -23,6 +25,8 @@ app.use(express.static(join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/user', user);
+app.use('/subscription', subscription);
+app.use('/transaction', transaction);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

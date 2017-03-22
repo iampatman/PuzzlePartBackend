@@ -15,35 +15,62 @@ class UserController {
         this.userDAO = new UserDAO_1.UserDAO();
     }
     registerUser(user, callback) {
-        this.userDAO.saveUser(user, function (err, result) {
+        return __awaiter(this, void 0, void 0, function* () {
             let returnCode = ReturnCode_1.ReturnCode.FAILED;
-            if (err != null) {
-                returnCode = ReturnCode_1.ReturnCode.EXCEPTION;
+            if (user.mobilePhone.length * user.password.length * user.name.length == 0) {
+                callback(null, { returnCode: ReturnCode_1.ReturnCode.DATA_INVALID });
+                return;
             }
-            else {
+            try {
+                let foundUser = yield this.userDAO.findUserByMobileNumber(user.mobilePhone);
+                if (foundUser != null) {
+                    callback(null, { returnCode: ReturnCode_1.ReturnCode.MOBILE_NUMBER_DUPLICATE });
+                    return;
+                }
+                let result = yield this.userDAO.saveUser(user);
                 returnCode = result == true ? ReturnCode_1.ReturnCode.SUCCEEDED : ReturnCode_1.ReturnCode.FAILED;
+                callback(null, { returnCode: returnCode });
             }
-            callback(returnCode);
+            catch (err) {
+                console.error(err);
+                callback(err, { returnCode: ReturnCode_1.ReturnCode.EXCEPTION });
+            }
         });
     }
     login(mobilePhone, password, callback) {
         return __awaiter(this, void 0, void 0, function* () {
+            let returnCode = ReturnCode_1.ReturnCode.FAILED;
+            let error = null;
+            let sessionID = "";
+            let user = null;
             try {
+                if (mobilePhone.length * password.length == 0) {
+                    callback(null, { returnCode: ReturnCode_1.ReturnCode.DATA_INVALID });
+                    throw new Error();
+                }
                 let userDAO = new UserDAO_1.UserDAO();
-                let user = (yield userDAO.findUserByUsername(mobilePhone));
-                let returnCode = ReturnCode_1.ReturnCode.USERNAME_OR_PASS_INCORRECT;
-                let sessionID = "";
-                if (user != null) {
+                user = (yield userDAO.findUserByMobileNumber(mobilePhone));
+                if (user == null) {
+                    returnCode = ReturnCode_1.ReturnCode.ACCOUNT_NOT_EXIST;
+                    return;
+                }
+                else {
                     if (user.password == password) {
                         returnCode = ReturnCode_1.ReturnCode.SUCCEEDED;
                         user.password = "";
                         sessionID = (yield SessionManager_1.SessionManager.getInstance().getSessionID(user.mobilePhone));
                     }
+                    else {
+                        returnCode = ReturnCode_1.ReturnCode.USERNAME_OR_PASS_INCORRECT;
+                    }
                 }
-                callback(null, { returnCode: returnCode, sessionID: sessionID, details: user });
             }
             catch (err) {
-                callback(err, { returnCode: ReturnCode_1.ReturnCode.EXCEPTION });
+                error = err;
+                returnCode = ReturnCode_1.ReturnCode.EXCEPTION;
+            }
+            finally {
+                callback(error, { returnCode: returnCode, sessionID: sessionID, details: user });
             }
             // userDAO.findUserByUsername(mobilePhone).then((userObj) => {
             //     return new Promise((resolve, reject) => {
