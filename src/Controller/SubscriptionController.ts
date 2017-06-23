@@ -85,6 +85,7 @@ export class SubscriptionController {
     async subscribe(data, callback) {
         let transaction = new Transaction();
         transaction.user_id = parseInt(data.user_id);
+        transaction.start_date = data.startDate
         transaction.pricing_id = parseInt(data.pricing_id);
         transaction.subscription_id = parseInt(data.subscription_id);
         transaction.discount_id = parseInt(data.discount_id);
